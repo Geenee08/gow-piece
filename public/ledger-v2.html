@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8,897 Lines of Wasseypur</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&display=swap');
+
+  :root {
+    --bg: #1a1a1a;
+    --bar-bg: #2a2a2a;
+    --shahid: #C0392B;
+    --sardar: #E74C3C;
+    --faisal: #E67E22;
+    --definite: #F39C12;
+    --ramadhir: #555;
+    --nasir: #D4A017;
+    --women: #2E86C1;
+    --durga: #5DADE2;
+    --accent: #C0392B;
+    --text: #e0e0e0;
+    --muted: #888;
+    --card-bg: #C0392B;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* =============================================
+     SCROLL CONTAINER — each "slide" is 100vh
+     ============================================= */
+  #scroll-container {
+    position: relative;
+  }
+
+  .scroll-step {
+    height: 100vh;
+    position: relative;
+  }
+
+  /* =============================================
+     STICKY VIZ — the bars stay in place
+     ============================================= */
+  #sticky-viz {
+    position: sticky;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  /* TOP BAR — character name + context */
+  #top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    z-index: 5;
+    transition: background 0.4s;
+  }
+
+  #char-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: color 0.4s;
+  }
+
+  #top-context {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: #666;
+    margin-left: auto;
+    text-align: right;
+  }
+
+  #top-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: #555;
+    letter-spacing: 0.12em;
+    position: absolute;
+    top: 12px;
+    left: 2rem;
+  }
+
+  /* BARS AREA */
+  #bars-area {
+    position: absolute;
+    top: 90px;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    display: flex;
+    align-items: stretch;
+    padding: 0 1rem;
+    gap: 1px;
+  }
+
+  .page-bar {
+    flex: 1;
+    background: var(--bar-bg);
+    position: relative;
+    min-width: 0;
+    border-radius: 1px;
+    transition: background 0.3s;
+  }
+
+  /* The mention highlight — positioned from bottom, height = intensity */
+  .page-bar .mention-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--accent);
+    border-radius: 1px 1px 0 0;
+    transition: height 0.5s ease, background 0.4s, opacity 0.4s;
+    opacity: 0.85;
+  }
+
+  /* Secondary character trace — thin line overlay */
+  .page-bar .secondary-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    border-radius: 1px 1px 0 0;
+    transition: height 0.5s ease, opacity 0.4s;
+  }
+
+  /* Active range highlight */
+  .page-bar.dimmed {
+    background: #1e1e1e;
+  }
+  .page-bar.dimmed .mention-fill {
+    opacity: 0.15;
+  }
+
+  /* QUARTER LABELS — bottom */
+  #quarter-labels {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: #555;
+    letter-spacing: 0.1em;
+  }
+
+  .q-label {
+    text-align: center;
+    border-top: 1px solid #333;
+    padding-top: 6px;
+  }
+
+  .q-divider {
+    width: 1px;
+    height: 20px;
+    background: #444;
+    flex-shrink: 0;
+  }
+
+  /* PART DIVIDER — vertical line between P1 and P2 */
+  #part-divider {
+    position: absolute;
+    top: 90px;
+    bottom: 40px;
+    width: 2px;
+    background: #555;
+    z-index: 3;
+    transition: left 0.3s;
+  }
+  #part-divider::after {
+    content: 'INTERVAL';
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: #666;
+    white-space: nowrap;
+  }
+
+  /* =============================================
+     INSIGHT CARD — slides up from bottom
+     ============================================= */
+  #insight-card {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: var(--card-bg);
+    color: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    max-width: 520px;
+    width: 90vw;
+    z-index: 10;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
+    opacity: 0;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+
+  #insight-card.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  #insight-card h3 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  #insight-card p {
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.9;
+  }
+
+  /* =============================================
+     DURGA GLOW STATE
+     ============================================= */
+  .page-bar.durga-glow {
+    background: transparent;
+  }
+  .page-bar.durga-glow .mention-fill {
+    background: var(--durga) !important;
+    opacity: 1;
+    box-shadow: 0 0 12px var(--durga), 0 0 30px rgba(93,173,226,0.3);
+  }
+
+</style>
+</head>
+<body>
+
+<div id="scroll-container">
+  <!-- Sticky visualization -->
+  <div id="sticky-viz">
+    <!-- Top bar -->
+    <div id="top-bar">
+      <span id="top-label">GANGS OF WASSEYPUR 1&2</span>
+      <span id="char-name"></span>
+      <span id="top-context"></span>
+    </div>
+
+    <!-- Bars -->
+    <div id="bars-area"></div>
+
+    <!-- Part divider -->
+    <div id="part-divider"></div>
+
+    <!-- Quarter labels -->
+    <div id="quarter-labels"></div>
+
+    <!-- Insight card -->
+    <div id="insight-card">
+      <h3 id="card-title"></h3>
+      <p id="card-body"></p>
+    </div>
+  </div>
+
+  <!-- Scroll steps — invisible, just drive the state -->
+  <div class="scroll-step" data-step="title"></div>
+  <div class="scroll-step" data-step="shahid"></div>
+  <div class="scroll-step" data-step="sardar"></div>
+  <div class="scroll-step" data-step="faisal"></div>
+  <div class="scroll-step" data-step="definite"></div>
+  <div class="scroll-step" data-step="durga"></div>
+  <div class="scroll-step" data-step="ramadhir"></div>
+  <div class="scroll-step" data-step="nasir"></div>
+  <div class="scroll-step" data-step="end"></div>
+</div>
+
+<script>
+fetch('ledger.json').then(r => r.json()).then(data => {
+
+  const barsArea = document.getElementById('bars-area');
+  const charName = document.getElementById('char-name');
+  const topContext = document.getElementById('top-context');
+  const topBar = document.getElementById('top-bar');
+  const partDivider = document.getElementById('part-divider');
+  const qLabels = document.getElementById('quarter-labels');
+  const card = document.getElementById('insight-card');
+  const cardTitle = document.getElementById('card-title');
+  const cardBody = document.getElementById('card-body');
+
+  const N = data.length; // 288
+  const p1Count = data.filter(d => d.part === 1).length; // 118
+
+  // Find max mention count for scaling
+  const maxMention = Math.max(...data.map(d => d.sh + d.sa + d.fa + d.de));
+
+  // Color map
+  const colors = {
+    shahid: '#8B0000', sardar: '#DC143C', faisal: '#FF4500',
+    definite: '#FF8C00', ramadhir: '#888', nasir: '#D4A017',
+    durga: '#5DADE2', women: '#2E86C1'
+  };
+
+  // Build 288 bars
+  const bars = [];
+  data.forEach((d, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'page-bar';
+    bar.dataset.index = i;
+
+    // Primary mention fill
+    const fill = document.createElement('div');
+    fill.className = 'mention-fill';
+    fill.style.height = '0%';
+    bar.appendChild(fill);
+
+    // Secondary fill (for overlays)
+    const sec = document.createElement('div');
+    sec.className = 'secondary-fill';
+    sec.style.height = '0%';
+    bar.appendChild(sec);
+
+    barsArea.appendChild(bar);
+    bars.push({ el: bar, fill, sec, data: d });
+  });
+
+  // Position part divider
+  function positionDivider() {
+    const areaRect = barsArea.getBoundingClientRect();
+    const barWidth = areaRect.width / N;
+    const divX = areaRect.left + barWidth * p1Count + 1;
+    partDivider.style.left = divX + 'px';
+  }
+  positionDivider();
+  window.addEventListener('resize', positionDivider);
+
+  // Build quarter labels
+  // P1: Q1-Q4 (each ~29.5 pages), P2: Q1-Q4 (each ~42.5 pages)
+  const quarters = [
+    { label: 'P1 · Q1', start: 0, end: 30 },
+    { label: 'Q2', start: 30, end: 59 },
+    { label: 'Q3', start: 59, end: 89 },
+    { label: 'Q4', start: 89, end: 118 },
+    { label: 'P2 · Q1', start: 118, end: 161 },
+    { label: 'Q2', start: 161, end: 203 },
+    { label: 'Q3', start: 203, end: 246 },
+    { label: 'Q4', start: 246, end: 288 },
+  ];
+
+  quarters.forEach((q, i) => {
+    if (i > 0) {
+      const div = document.createElement('div');
+      div.className = 'q-divider';
+      qLabels.appendChild(div);
+    }
+    const lbl = document.createElement('div');
+    lbl.className = 'q-label';
+    lbl.style.flex = (q.end - q.start);
+    lbl.textContent = q.label;
+    qLabels.appendChild(lbl);
+  });
+
+  // =============================================
+  // STATE MACHINE
+  // =============================================
+
+  function showChar(charKey, name, context, highlightRange, cardData) {
+    // Update top bar
+    charName.textContent = name;
+    topContext.textContent = context || '';
+
+    const charColor = colors[charKey] || '#C0392B';
+    charName.style.color = charColor;
+    document.documentElement.style.setProperty('--accent', charColor);
+
+    // Update bars
+    bars.forEach((b, i) => {
+      const d = b.data;
+      b.el.className = 'page-bar'; // reset
+
+      // Get this character's count on this page
+      let count = 0;
+      if (charKey === 'shahid') count = d.sh;
+      else if (charKey === 'sardar') count = d.sa;
+      else if (charKey === 'faisal') count = d.fa;
+      else if (charKey === 'definite') count = d.de;
+      else if (charKey === 'ramadhir') count = d.ram;
+      else if (charKey === 'nasir') count = d.nvo; // V.O. only
+      else if (charKey === 'durga') count = d.w; // women
+      else if (charKey === 'all') count = d.sh + d.sa + d.fa + d.de;
+
+      const pct = Math.min((count / Math.max(maxMention, 1)) * 100, 100);
+      b.fill.style.height = pct + '%';
+      b.fill.style.background = charColor;
+      b.fill.style.opacity = '0.85';
+      b.sec.style.opacity = '0';
+
+      // Dim if outside highlight range
+      if (highlightRange) {
+        const [s, e] = highlightRange;
+        if (i < s || i >= e) {
+          b.el.classList.add('dimmed');
+        }
+      }
+    });
+
+    // Card
+    if (cardData) {
+      cardTitle.textContent = cardData.title;
+      cardBody.textContent = cardData.body;
+      card.style.background = charColor;
+      card.classList.add('visible');
+    } else {
+      card.classList.remove('visible');
+    }
+  }
+
+  function showDurga() {
+    charName.textContent = 'DURGA';
+    charName.style.color = colors.durga;
+    topContext.textContent = '62 mentions · 16 dialogue lines';
+
+    bars.forEach((b, i) => {
+      b.el.className = 'page-bar';
+      b.fill.style.height = '0%';
+      b.fill.style.opacity = '0';
+      b.sec.style.opacity = '0';
+      b.el.style.background = '#1a1a1a';
+
+      // Durga action pages: 119 (index 118) and 288 (index 287)
+      if (b.data.da) {
+        b.el.classList.add('durga-glow');
+        b.fill.style.height = '100%';
+        b.fill.style.opacity = '1';
+      }
+    });
+
+    cardTitle.textContent = '16 Lines. 288 Pages Apart.';
+    cardBody.textContent = 'She makes the phone call that kills Sardar. She stands behind Definite when he kills Faisal. The woman who speaks least acts most.';
+    card.style.background = '#1A5276';
+    card.classList.add('visible');
+  }
+
+  function showRamadhir() {
+    charName.textContent = 'Ramadhir Singh';
+    charName.style.color = '#aaa';
+    topContext.textContent = '234 mentions · Never disappears';
+
+    bars.forEach((b, i) => {
+      b.el.className = 'page-bar';
+      const ramPct = Math.min((b.data.ram / 6) * 100, 100);
+      b.fill.style.height = ramPct + '%';
+      b.fill.style.background = '#e8e8e8';
+      b.fill.style.opacity = b.data.ram > 0 ? '0.7' : '0';
+      b.sec.style.opacity = '0';
+    });
+
+    cardTitle.textContent = 'The Constant';
+    cardBody.textContent = 'Four generations of Khans rise and fall. He endures. When Faisal finally shoots him, Nasir tells us it changed nothing.';
+    card.style.background = '#333';
+    card.classList.add('visible');
+  }
+
+  function showNasir() {
+    charName.textContent = 'Nasir Khan';
+    charName.style.color = colors.nasir;
+    topContext.textContent = '277 mentions · 67 voiceovers · 0 violence';
+
+    bars.forEach((b, i) => {
+      b.el.className = 'page-bar';
+      const nvoPct = Math.min((b.data.nvo / 4) * 100, 100);
+      b.fill.style.height = nvoPct + '%';
+      b.fill.style.background = colors.nasir;
+      b.fill.style.opacity = b.data.nvo > 0 ? '0.85' : '0';
+      b.sec.style.opacity = '0';
+    });
+
+    cardTitle.textContent = 'Zero Kills. 67 Voiceovers.';
+    cardBody.textContent = 'The only Khan who never touches a gun. He moves to Mumbai. He narrates from 1,200km away. The only Khan who survives.';
+    card.style.background = '#7D6608';
+    card.classList.add('visible');
+  }
+
+  function showEnd() {
+    charName.textContent = '';
+    topContext.textContent = '';
+
+    // Show all characters blended
+    bars.forEach((b, i) => {
+      b.el.className = 'page-bar';
+      const total = b.data.sh + b.data.sa + b.data.fa + b.data.de;
+      const pct = Math.min((total / maxMention) * 100, 100);
+      
+      // Blend color
+      if (total > 0) {
+        const r = (0x8B * b.data.sh + 0xDC * b.data.sa + 0xFF * b.data.fa + 0xFF * b.data.de) / total;
+        const g = (0x00 * b.data.sh + 0x14 * b.data.sa + 0x45 * b.data.fa + 0x8C * b.data.de) / total;
+        const bl = (0x00 * b.data.sh + 0x3C * b.data.sa + 0x00 * b.data.fa + 0x00 * b.data.de) / total;
+        b.fill.style.background = `rgb(${Math.round(r)},${Math.round(g)},${Math.round(bl)})`;
+      }
+      b.fill.style.height = pct + '%';
+      b.fill.style.opacity = '0.6';
+      b.sec.style.opacity = '0';
+    });
+
+    cardTitle.textContent = 'Nothing Changed.';
+    cardBody.textContent = '8,897 lines. 288 pages. 64 years. Four dead Khans. One surviving narrator. One woman with 16 lines who held it all together.';
+    card.style.background = '#333';
+    card.classList.add('visible');
+  }
+
+  // =============================================
+  // SCROLL OBSERVER
+  // =============================================
+  const steps = document.querySelectorAll('.scroll-step');
+
+  const stepObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const step = entry.target.dataset.step;
+
+      switch(step) {
+        case 'title':
+          showChar('all', '', '288 pages · 8,897 lines', null, null);
+          card.classList.remove('visible');
+          break;
+
+        case 'shahid':
+          showChar('shahid', 'SHAHID KHAN', 'Gen 1 · 110 mentions', [0, 30], {
+            title: 'He Owns The First 30 Pages',
+            body: '110 mentions in the first quarter of Part 1. He\'s the patriarch. The screen is his. Then he\'s shot — and vanishes. Zero mentions for 258 pages.'
+          });
+          break;
+
+        case 'sardar':
+          showChar('sardar', 'SARDAR KHAN', 'Gen 2 · 430 mentions', null, {
+            title: '32 Mentions While His Father Lives',
+            body: 'That\'s 29% of Shahid\'s presence. The saga\'s protagonist barely registers in its opening act. Then Shahid dies. Sardar\'s mentions quintuple to 168.'
+          });
+          break;
+
+        case 'faisal':
+          showChar('faisal', 'FAISAL KHAN', 'Gen 3 · 678 mentions', [118, 288], {
+            title: 'Part 2 Ignites',
+            body: '678 mentions — the highest of any character. The orange wash dominating the right half is him. But somewhere in there: 4 mentions for Definite. The character who will end it all.'
+          });
+          break;
+
+        case 'definite':
+          showChar('definite', 'DEFINITE', 'Gen 4 · 272 mentions', [118, 288], {
+            title: '4%',
+            body: 'Definite\'s visibility while Faisal lives: 4% of the patriarch\'s presence. Less than a rounding error. Then, quarter by quarter: 4, 47, 38, 49. The saga hides its final move more aggressively each generation.'
+          });
+          break;
+
+        case 'durga':
+          showDurga();
+          break;
+
+        case 'ramadhir':
+          showRamadhir();
+          break;
+
+        case 'nasir':
+          showNasir();
+          break;
+
+        case 'end':
+          showEnd();
+          break;
+      }
+    });
+  }, { threshold: 0.5 });
+
+  steps.forEach(s => stepObserver.observe(s));
+
+  // Initialize
+  showChar('all', '', '288 pages · 8,897 lines', null, null);
+});
+</script>
+</body>
+</html>

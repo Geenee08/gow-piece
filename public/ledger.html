@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ledger — Prototype</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&display=swap');
+
+  :root {
+    --bg: #080808;
+    --shahid: #8B0000;
+    --sardar: #DC143C;
+    --faisal: #FF4500;
+    --definite: #FF8C00;
+    --ramadhir: #333;
+    --nasir-vo: #D4A017;
+    --women: #2E86C1;
+    --durga-glow: #5DADE2;
+    --none: #0d0d0d;
+    --text: #e0e0e0;
+    --muted: #666;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    overflow-x: hidden;
+  }
+
+  /* =============================================
+     THE LEDGER STRIP — fixed on right side
+     ============================================= */
+  #ledger-container {
+    position: fixed;
+    right: 2vw;
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(70vw - 4vw);
+    height: 88vh;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .ledger-row {
+    flex: 1;
+    display: flex;
+    position: relative;
+    min-height: 0;
+  }
+
+  /* Main dominance bar */
+  .ledger-row .main-bar {
+    flex: 1;
+    position: relative;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+  }
+
+  /* Ramadhir underline */
+  .ledger-row .ram-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--ramadhir);
+    opacity: 0;
+  }
+  .ledger-row[data-ram="1"] .ram-bar {
+    opacity: 0.7;
+  }
+
+  /* Women's presence — left edge mark */
+  .ledger-row .women-mark {
+    position: absolute;
+    left: -6px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--women);
+    opacity: 0;
+    border-radius: 1px;
+  }
+  .ledger-row[data-women="1"] .women-mark {
+    opacity: 0.6;
+  }
+
+  /* Nasir V.O. — right edge notch */
+  .ledger-row .nasir-notch {
+    position: absolute;
+    right: -5px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--nasir-vo);
+    opacity: 0;
+    border-radius: 1px;
+  }
+  .ledger-row[data-nvo="1"] .nasir-notch {
+    opacity: 0.7;
+  }
+
+  /* Durga action glow */
+  .ledger-row.durga-action .main-bar {
+    box-shadow: 0 0 8px 3px var(--durga-glow), 0 0 20px 6px rgba(93, 173, 226, 0.3);
+    z-index: 2;
+  }
+  .ledger-row.durga-action .main-bar::after {
+    content: '';
+    position: absolute;
+    left: -10px;
+    right: -10px;
+    top: -1px;
+    bottom: -1px;
+    border: 1px solid var(--durga-glow);
+    border-radius: 2px;
+    opacity: 0.8;
+  }
+
+  /* Part divider */
+  .ledger-divider {
+    width: 100%;
+    height: 3px;
+    background: #222;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .ledger-divider::after {
+    content: 'INTERVAL';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: #555;
+  }
+
+  /* Highlight bracket */
+  #ledger-bracket {
+    position: absolute;
+    left: -14px;
+    width: 8px;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-right: none;
+    border-radius: 3px 0 0 3px;
+    pointer-events: none;
+    transition: top 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+    opacity: 0;
+  }
+
+  /* Durga connecting line */
+  #durga-line {
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    border-left: 1px dashed var(--durga-glow);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s;
+  }
+  #durga-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--durga-glow);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.6s;
+    text-align: center;
+    width: auto;
+  }
+
+  /* =============================================
+     ARTICLE CONTENT — left side
+     ============================================= */
+  #content {
+    width: 25vw;
+    min-width: 260px;
+    margin: 0;
+    padding: 0 1.2rem;
+    padding-left: 2vw;
+  }
+
+  .scene {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 0;
+  }
+
+  .scene h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+  }
+
+  .scene p {
+    font-size: 0.88rem;
+    line-height: 1.65;
+    margin-bottom: 0.8em;
+    color: #bbb;
+  }
+
+  .cut-to {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: #333;
+    text-align: center;
+    padding: 3rem 0;
+  }
+
+  .script-quote {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: #888;
+    border-left: 2px solid #333;
+    padding: 0.5rem 0.8rem;
+    margin: 0.8rem 0;
+    background: #0c0c0c;
+    line-height: 1.5;
+  }
+
+  .big-num {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--durga-glow);
+    text-align: left;
+    line-height: 1;
+    margin: 1.5rem 0 0.3rem;
+  }
+  .big-num-label {
+    text-align: left;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Mobile override */
+  @media (max-width: 768px) {
+    #ledger-container {
+      width: 55vw;
+      right: 1vw;
+      height: 75vh;
+    }
+    #content { 
+      width: 40vw;
+      min-width: 180px;
+      padding-left: 1vw;
+    }
+    .scene { min-height: 80vh; }
+    .big-num { font-size: 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- THE LEDGER STRIP -->
+<div id="ledger-container">
+  <div id="ledger-bracket"></div>
+  <div id="durga-line"></div>
+  <div id="durga-label">62 mentions. 16 lines.<br>288 pages apart.</div>
+  <!-- rows injected by JS -->
+</div>
+
+<!-- ARTICLE TEXT -->
+<div id="content">
+
+  <div class="scene" data-range="0,0" id="scene-title">
+    <h2 style="font-size:2rem; text-align:left; margin-bottom:0.5rem;">
+      <span style="color:#e74c3c;">8,897</span> Lines
+    </h2>
+    <p style="text-align:left; color:#666; font-style:italic; font-size:0.85rem;">
+      Every line of the Gangs of Wasseypur scripts. Both films. 288 pages. 64 years.<br>The strip on the right is the saga — page by page.
+    </p>
+  </div>
+
+  <div class="cut-to">CUT TO:</div>
+
+  <div class="scene" data-range="1,30" id="scene-shahid">
+    <h2>Shahid Khan owns the first 30 pages.</h2>
+    <p>110 mentions in the first quarter of Part 1. He's the patriarch. The screen is his.</p>
+    <p>Then he's shot. And he vanishes. Not a slow fade — an amputation. Zero mentions for the remaining 258 pages.</p>
+    <p>Watch the strip on the right. That dark red block at the top? That's Shahid. Everything below it is the world after he dies.</p>
+  </div>
+
+  <div class="cut-to">CUT TO:</div>
+
+  <div class="scene" data-range="20,118" id="scene-sardar">
+    <h2>Sardar Khan has 32 mentions while his father is alive.</h2>
+    <p>That's 29% of Shahid's presence. He is overshadowed. Suppressed. The protagonist of the saga barely registers in its opening act.</p>
+    <p>Then Shahid dies. And Sardar's mentions quintuple — 168 in the next quarter. The crimson bleeding through the strip right now? That's what succession looks like on the page.</p>
+  </div>
+
+  <div class="cut-to">CUT TO:</div>
+
+  <div class="scene" data-range="119,220" id="scene-faisal">
+    <h2>Part 2 ignites.</h2>
+    <p>Faisal inherits. 678 mentions across the saga — the highest of any character. The orange wash that dominates the lower half of the strip is him.</p>
+    <p>But somewhere in that orange, there's the faintest amber. Four mentions in the first quarter of Part 2. That's Definite. The character who will end the saga. Currently: invisible.</p>
+  </div>
+
+  <div class="cut-to">CUT TO:</div>
+
+  <div class="scene" data-range="240,288" id="scene-definite">
+    <h2>4%.</h2>
+    <p>Definite's visibility while Faisal lives: 4% of the patriarch's presence. Less than a rounding error. The saga hides its final move more aggressively than any generation before.</p>
+    <p>Sardar was at 29%. Definite is at 4%. The suppression ratio tightens each time. The saga learns to hide its hand.</p>
+  </div>
+
+  <div class="cut-to">CUT TO:</div>
+
+  <div class="scene" data-range="0,288" data-mode="durga" id="scene-durga">
+    <h2 style="color: var(--durga-glow);">Now look at the two blue marks.</h2>
+    <p>Top of the strip. Bottom of the strip. 288 pages apart. The same woman.</p>
+    <div class="script-quote">
+      DURGA (CONT'D)<br>
+      (on phone) वो निकल गए हैं.
+    </div>
+    <p>Page 119. Durga makes a phone call. Sardar Khan — 430 mentions, the dominant character of Part 1 — is shot dead at a petrol pump.</p>
+    <div class="script-quote">
+      Definite walks up to Durga.
+    </div>
+    <p>Page 288. Faisal is dead. Definite stands behind him. The saga ends where it began: with her.</p>
+    <div class="big-num">16</div>
+    <div class="big-num-label">Dialogue lines. 62 mentions. She bookends everything.</div>
+  </div>
+
+  <div class="cut-to">CUT TO:</div>
+
+  <div class="scene" data-range="0,288" data-mode="ramadhir" id="scene-constant">
+    <h2>One more thing.</h2>
+    <p>Look at the strip again. Look at the thin dark line that runs underneath everything. The one that never breaks.</p>
+    <p>Ramadhir Singh. 234 mentions. Present on 60 of 288 pages. He dips once to near-zero — but he never disappears. Four generations of Khans rise and fall against him. He endures.</p>
+    <p>When Faisal finally shoots him in the penultimate scene, Nasir's voiceover tells us it changed nothing.</p>
+    <div class="script-quote" style="border-color: var(--nasir-vo);">
+      NASIR (V.O.)<br>
+      वासेपुर को फ़ैज़ल के जाने से कोई फ़रक नहीं पड़ा. ना ही रामाधीर के मरने से.<br>
+      वो तब भी कुरुक्षेत्र था और आज भी कुरुक्षेत्र है... और शायद हमेशा रहेगा.
+    </div>
+  </div>
+
+  <div style="height: 30vh;"></div>
+
+  <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #333; text-align:center; padding: 2rem;">
+    for post production purposes only
+  </p>
+
+</div>
+
+<script>
+fetch('ledger.json').then(r => r.json()).then(data => {
+
+  const container = document.getElementById('ledger-container');
+  const bracket = document.getElementById('ledger-bracket');
+  const durgaLine = document.getElementById('durga-line');
+  const durgaLabel = document.getElementById('durga-label');
+  
+  const colorMap = {
+    shahid: '#8B0000',
+    sardar: '#DC143C',
+    faisal: '#FF4500',
+    definite: '#FF8C00',
+  };
+  
+  // Find Part 1 / Part 2 boundary
+  const p1End = data.findIndex(d => d.part === 2);
+  
+  // Build rows
+  data.forEach((d, i) => {
+    // Insert divider at part boundary
+    if (i === p1End) {
+      const div = document.createElement('div');
+      div.className = 'ledger-divider';
+      container.appendChild(div);
+    }
+    
+    const row = document.createElement('div');
+    row.className = 'ledger-row';
+    if (d.da) row.classList.add('durga-action');
+    row.dataset.page = d.p;
+    if (d.ram > 0) row.dataset.ram = "1";
+    if (d.w > 0) row.dataset.women = "1";
+    if (d.nvo > 0) row.dataset.nvo = "1";
+    
+    // Main bar — blend khan colors by relative count
+    const bar = document.createElement('div');
+    bar.className = 'main-bar';
+    
+    const total = d.sh + d.sa + d.fa + d.de;
+    if (total > 0) {
+      // Weighted color blend
+      const r = (parseInt(colorMap.shahid?.slice(1,3),16)||0) * d.sh
+              + (parseInt(colorMap.sardar?.slice(1,3),16)||0) * d.sa
+              + (parseInt(colorMap.faisal?.slice(1,3),16)||0) * d.fa
+              + (parseInt(colorMap.definite?.slice(1,3),16)||0) * d.de;
+      const g = (parseInt(colorMap.shahid?.slice(3,5),16)||0) * d.sh
+              + (parseInt(colorMap.sardar?.slice(3,5),16)||0) * d.sa
+              + (parseInt(colorMap.faisal?.slice(3,5),16)||0) * d.fa
+              + (parseInt(colorMap.definite?.slice(3,5),16)||0) * d.de;
+      const b = (parseInt(colorMap.shahid?.slice(5,7),16)||0) * d.sh
+              + (parseInt(colorMap.sardar?.slice(5,7),16)||0) * d.sa
+              + (parseInt(colorMap.faisal?.slice(5,7),16)||0) * d.fa
+              + (parseInt(colorMap.definite?.slice(5,7),16)||0) * d.de;
+      
+      const intensity = Math.min(total / 8, 1); // normalize brightness
+      const rr = Math.round(r / total);
+      const gg = Math.round(g / total);
+      const bb = Math.round(b / total);
+      bar.style.backgroundColor = `rgba(${rr},${gg},${bb},${0.3 + 0.7 * intensity})`;
+    } else {
+      bar.style.backgroundColor = '#0d0d0d';
+    }
+    
+    row.appendChild(bar);
+    
+    // Ramadhir underline
+    const ramBar = document.createElement('div');
+    ramBar.className = 'ram-bar';
+    row.appendChild(ramBar);
+    
+    // Women mark
+    const wMark = document.createElement('div');
+    wMark.className = 'women-mark';
+    row.appendChild(wMark);
+    
+    // Nasir notch
+    const nNotch = document.createElement('div');
+    nNotch.className = 'nasir-notch';
+    row.appendChild(nNotch);
+    
+    container.appendChild(row);
+  });
+  
+  // Position Durga connecting line
+  const rows = container.querySelectorAll('.ledger-row');
+  const durga1 = container.querySelector('.durga-action');
+  const durgaAll = container.querySelectorAll('.durga-action');
+  
+  if (durgaAll.length >= 2) {
+    const first = durgaAll[0];
+    const last = durgaAll[durgaAll.length - 1];
+    
+    const updateDurgaLine = () => {
+      const cRect = container.getBoundingClientRect();
+      const fRect = first.getBoundingClientRect();
+      const lRect = last.getBoundingClientRect();
+      
+      durgaLine.style.top = (fRect.bottom - cRect.top) + 'px';
+      durgaLine.style.height = (lRect.top - fRect.bottom) + 'px';
+      durgaLabel.style.top = ((fRect.bottom + lRect.top) / 2 - cRect.top - 10) + 'px';
+    };
+    updateDurgaLine();
+    window.addEventListener('resize', updateDurgaLine);
+  }
+  
+  // SCROLL-DRIVEN BEHAVIOR
+  const scenes = document.querySelectorAll('.scene');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      
+      const scene = entry.target;
+      const range = scene.dataset.range?.split(',').map(Number);
+      const mode = scene.dataset.mode;
+      
+      // Reset all rows
+      rows.forEach(r => {
+        r.querySelector('.main-bar').style.opacity = '0.85';
+      });
+      
+      // Show bracket for current range
+      if (range && range[0] > 0) {
+        const startRow = rows[Math.max(0, range[0] - 1)];
+        const endRow = rows[Math.min(rows.length - 1, range[1] - 1)];
+        if (startRow && endRow) {
+          const cRect = container.getBoundingClientRect();
+          const sRect = startRow.getBoundingClientRect();
+          const eRect = endRow.getBoundingClientRect();
+          bracket.style.top = (sRect.top - cRect.top) + 'px';
+          bracket.style.height = (eRect.bottom - sRect.top) + 'px';
+          bracket.style.opacity = '0.6';
+          
+          // Dim rows outside range
+          rows.forEach((r, i) => {
+            const pg = i + 1;
+            if (pg < range[0] || pg > range[1]) {
+              r.querySelector('.main-bar').style.opacity = '0.15';
+            }
+          });
+        }
+      } else if (range && range[0] === 0 && range[1] === 0) {
+        // Title: everything dim
+        bracket.style.opacity = '0';
+        rows.forEach(r => {
+          r.querySelector('.main-bar').style.opacity = '0.3';
+        });
+      } else if (range && range[0] === 0 && range[1] === 288) {
+        // Full view
+        bracket.style.opacity = '0';
+      }
+      
+      // Durga mode
+      if (mode === 'durga') {
+        durgaLine.style.opacity = '0.8';
+        durgaLabel.style.opacity = '1';
+        // Dim everything except durga marks
+        rows.forEach(r => {
+          if (!r.classList.contains('durga-action')) {
+            r.querySelector('.main-bar').style.opacity = '0.08';
+          }
+        });
+        bracket.style.opacity = '0';
+      } else {
+        durgaLine.style.opacity = '0';
+        durgaLabel.style.opacity = '0';
+      }
+      
+      // Ramadhir mode
+      if (mode === 'ramadhir') {
+        rows.forEach(r => {
+          r.querySelector('.main-bar').style.opacity = '0.1';
+          if (r.dataset.ram === '1') {
+            r.querySelector('.ram-bar').style.opacity = '1';
+            r.querySelector('.ram-bar').style.height = '100%';
+            r.querySelector('.ram-bar').style.background = '#e8e8e8';
+          }
+        });
+        bracket.style.opacity = '0';
+      } else {
+        rows.forEach(r => {
+          r.querySelector('.ram-bar').style.height = '2px';
+          r.querySelector('.ram-bar').style.background = 'var(--ramadhir)';
+          if (r.dataset.ram === '1') {
+            r.querySelector('.ram-bar').style.opacity = '0.7';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+  
+  scenes.forEach(s => observer.observe(s));
+});
+</script>
+
+</body>
+</html>

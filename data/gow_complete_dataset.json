@@ -1,0 +1,537 @@
+{
+  "meta": {
+    "part1_pages": 118,
+    "part2_pages": 170,
+    "total_pages": 288,
+    "part1_lines": 3949,
+    "part2_lines": 4948,
+    "total_lines": 8897,
+    "part1_scenes": 100,
+    "part2_scenes": 342,
+    "total_scenes": 442,
+    "part1_cuts": 116,
+    "part2_cuts": 323,
+    "time_span": "1940-2009",
+    "years_covered": 69,
+    "part1_avg_scene_length": 39.2,
+    "part2_avg_scene_length": 14.4,
+    "part1_time_periods": 14,
+    "part2_time_periods": 1
+  },
+  "succession": {
+    "Shahid Khan": {
+      "role": "Gen 1",
+      "p1_quarters": [
+        110,
+        0,
+        0,
+        0
+      ],
+      "p2_quarters": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "p1_total": 110,
+      "p2_total": 0,
+      "saga_total": 110,
+      "eight_quarters": [
+        110,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "Sardar Khan": {
+      "role": "Gen 2",
+      "p1_quarters": [
+        32,
+        168,
+        123,
+        93
+      ],
+      "p2_quarters": [
+        10,
+        0,
+        0,
+        2
+      ],
+      "p1_total": 416,
+      "p2_total": 12,
+      "saga_total": 428,
+      "eight_quarters": [
+        32,
+        168,
+        123,
+        93,
+        10,
+        0,
+        0,
+        2
+      ]
+    },
+    "Danish": {
+      "role": "Gen 3a",
+      "p1_quarters": [
+        0,
+        17,
+        51,
+        45
+      ],
+      "p2_quarters": [
+        72,
+        0,
+        2,
+        0
+      ],
+      "p1_total": 113,
+      "p2_total": 74,
+      "saga_total": 187,
+      "eight_quarters": [
+        0,
+        17,
+        51,
+        45,
+        72,
+        0,
+        2,
+        0
+      ]
+    },
+    "Faisal Khan": {
+      "role": "Gen 3b",
+      "p1_quarters": [
+        5,
+        13,
+        28,
+        94
+      ],
+      "p2_quarters": [
+        199,
+        85,
+        143,
+        110
+      ],
+      "p1_total": 140,
+      "p2_total": 537,
+      "saga_total": 677,
+      "eight_quarters": [
+        5,
+        13,
+        28,
+        94,
+        199,
+        85,
+        143,
+        110
+      ]
+    },
+    "Definite": {
+      "role": "Gen 4",
+      "p1_quarters": [
+        0,
+        0,
+        0,
+        10
+      ],
+      "p2_quarters": [
+        7,
+        80,
+        87,
+        88
+      ],
+      "p1_total": 10,
+      "p2_total": 262,
+      "saga_total": 272,
+      "eight_quarters": [
+        0,
+        0,
+        0,
+        10,
+        7,
+        80,
+        87,
+        88
+      ]
+    },
+    "Nasir": {
+      "role": "Narrator",
+      "p1_quarters": [
+        60,
+        52,
+        38,
+        12
+      ],
+      "p2_quarters": [
+        45,
+        25,
+        7,
+        38
+      ],
+      "p1_total": 162,
+      "p2_total": 115,
+      "saga_total": 277,
+      "eight_quarters": [
+        60,
+        52,
+        38,
+        12,
+        45,
+        25,
+        7,
+        38
+      ]
+    },
+    "Ramadhir Singh": {
+      "role": "Antagonist",
+      "p1_quarters": [
+        48,
+        35,
+        45,
+        17
+      ],
+      "p2_quarters": [
+        31,
+        2,
+        25,
+        31
+      ],
+      "p1_total": 145,
+      "p2_total": 89,
+      "saga_total": 234,
+      "eight_quarters": [
+        48,
+        35,
+        45,
+        17,
+        31,
+        2,
+        25,
+        31
+      ]
+    },
+    "Nagma": {
+      "role": "Matriarch",
+      "p1_quarters": [
+        16,
+        54,
+        40,
+        33
+      ],
+      "p2_quarters": [
+        55,
+        16,
+        15,
+        0
+      ],
+      "p1_total": 143,
+      "p2_total": 86,
+      "saga_total": 229,
+      "eight_quarters": [
+        16,
+        54,
+        40,
+        33,
+        55,
+        16,
+        15,
+        0
+      ]
+    },
+    "Mohsina": {
+      "role": "Wife",
+      "p1_quarters": [
+        0,
+        3,
+        0,
+        26
+      ],
+      "p2_quarters": [
+        53,
+        21,
+        18,
+        17
+      ],
+      "p1_total": 29,
+      "p2_total": 109,
+      "saga_total": 138,
+      "eight_quarters": [
+        0,
+        3,
+        0,
+        26,
+        53,
+        21,
+        18,
+        17
+      ]
+    },
+    "Durga": {
+      "role": "Mechanism",
+      "p1_quarters": [
+        0,
+        12,
+        11,
+        17
+      ],
+      "p2_quarters": [
+        4,
+        9,
+        0,
+        9
+      ],
+      "p1_total": 40,
+      "p2_total": 22,
+      "saga_total": 62,
+      "eight_quarters": [
+        0,
+        12,
+        11,
+        17,
+        4,
+        9,
+        0,
+        9
+      ]
+    },
+    "Sultan": {
+      "role": "Enforcer",
+      "p1_quarters": [
+        43,
+        1,
+        22,
+        56
+      ],
+      "p2_quarters": [
+        10,
+        20,
+        48,
+        6
+      ],
+      "p1_total": 122,
+      "p2_total": 84,
+      "saga_total": 206,
+      "eight_quarters": [
+        43,
+        1,
+        22,
+        56,
+        10,
+        20,
+        48,
+        6
+      ]
+    }
+  },
+  "survival": {
+    "Shahid Khan": {
+      "mentions": 110,
+      "voiceover": 0,
+      "violence_lines": 4,
+      "dialogue_blocks": 36,
+      "survives": false,
+      "role": "Gen 1"
+    },
+    "Sardar Khan": {
+      "mentions": 428,
+      "voiceover": 1,
+      "violence_lines": 13,
+      "dialogue_blocks": 203,
+      "survives": false,
+      "role": "Gen 2"
+    },
+    "Danish": {
+      "mentions": 187,
+      "voiceover": 1,
+      "violence_lines": 2,
+      "dialogue_blocks": 90,
+      "survives": false,
+      "role": "Gen 3a"
+    },
+    "Faisal Khan": {
+      "mentions": 677,
+      "voiceover": 0,
+      "violence_lines": 31,
+      "dialogue_blocks": 295,
+      "survives": false,
+      "role": "Gen 3b"
+    },
+    "Definite": {
+      "mentions": 272,
+      "voiceover": 11,
+      "violence_lines": 19,
+      "dialogue_blocks": 142,
+      "survives": true,
+      "role": "Gen 4"
+    },
+    "Nasir": {
+      "mentions": 277,
+      "voiceover": 67,
+      "violence_lines": 0,
+      "dialogue_blocks": 122,
+      "survives": true,
+      "role": "Narrator"
+    },
+    "Ramadhir Singh": {
+      "mentions": 234,
+      "voiceover": 1,
+      "violence_lines": 3,
+      "dialogue_blocks": 105,
+      "survives": true,
+      "role": "Antagonist"
+    },
+    "Nagma": {
+      "mentions": 229,
+      "voiceover": 0,
+      "violence_lines": 0,
+      "dialogue_blocks": 120,
+      "survives": true,
+      "role": "Matriarch"
+    },
+    "Mohsina": {
+      "mentions": 138,
+      "voiceover": 0,
+      "violence_lines": 1,
+      "dialogue_blocks": 79,
+      "survives": true,
+      "role": "Wife"
+    },
+    "Durga": {
+      "mentions": 62,
+      "voiceover": 0,
+      "violence_lines": 0,
+      "dialogue_blocks": 25,
+      "survives": true,
+      "role": "Mechanism"
+    },
+    "Sultan": {
+      "mentions": 206,
+      "voiceover": 0,
+      "violence_lines": 14,
+      "dialogue_blocks": 78,
+      "survives": false,
+      "role": "Enforcer"
+    }
+  },
+  "gender": {
+    "nagma_vs_ramadhir": {
+      "nagma_mentions": 229,
+      "ramadhir_mentions": 234,
+      "note": "Near-identical volume. Opposite agency."
+    },
+    "women_agency_p2": {
+      "MOHSINA": {
+        "dialogue_lines": 70,
+        "commands": 12,
+        "command_pct": 17,
+        "questions": 27,
+        "question_pct": 39,
+        "grief": 4,
+        "grief_pct": 6
+      },
+      "NAGMA": {
+        "dialogue_lines": 50,
+        "commands": 10,
+        "command_pct": 20,
+        "questions": 17,
+        "question_pct": 34,
+        "grief": 3,
+        "grief_pct": 6
+      },
+      "SHAMA PARVEEN": {
+        "dialogue_lines": 34,
+        "commands": 0,
+        "command_pct": 0,
+        "questions": 9,
+        "question_pct": 26,
+        "grief": 7,
+        "grief_pct": 21
+      },
+      "DURGA": {
+        "dialogue_lines": 16,
+        "commands": 2,
+        "command_pct": 12,
+        "questions": 2,
+        "question_pct": 12,
+        "grief": 2,
+        "grief_pct": 12
+      }
+    },
+    "durga_bookend": {
+      "total_mentions": 62,
+      "dialogue_lines_p2": 16,
+      "first_action": "Phone call sending Sardar to his death (P1 end / P2 opening)",
+      "last_action": "Standing behind Definite after he kills Faisal (P2 end)"
+    },
+    "mohsina_final_scene": "Drying clothes on Mumbai rooftop. The survivor."
+  },
+  "pacing": {
+    "scenes_per_quarter": {
+      "p2_q1": 73,
+      "p2_q2": 70,
+      "p2_q3": 81,
+      "p2_q4": 113
+    },
+    "cuts_per_quarter": {
+      "p2_q1": 68,
+      "p2_q2": 66,
+      "p2_q3": 75,
+      "p2_q4": 114
+    },
+    "part1_vs_part2": {
+      "p1_scenes_per_page": 0.8,
+      "p2_scenes_per_page": 2.0,
+      "acceleration_factor": 2.4
+    },
+    "daylight": {
+      "day_scenes": 334,
+      "night_scenes": 101,
+      "day_pct": 77,
+      "ext_deaths": 22,
+      "int_deaths": 10
+    }
+  },
+  "constants": {
+    "ramadhir_8q": [
+      48,
+      35,
+      45,
+      17,
+      31,
+      2,
+      25,
+      31
+    ],
+    "ramadhir_never_zero": true,
+    "ramadhir_note": "Dips to 2 in P2-Q2 but never reaches zero. The only character present in all 8 quarters.",
+    "first_speaker_p1": "Sultan",
+    "last_speaker_p1": "Sardar Khan (V.O., dead)",
+    "first_speaker_p2": "Sardar (flashback)",
+    "last_speaker_p2": "Nasir (V.O., from Mumbai)",
+    "nasir_mode_shift": {
+      "p1_vo_pct": 8,
+      "p2_vo_pct": 47
+    },
+    "nasir_direction": {
+      "narrates_before_death": 4,
+      "narrates_after_death": 15
+    }
+  },
+  "bhagalpur": {
+    "total_lines": 350,
+    "pct_of_script": 7.1,
+    "total_scenes": 72,
+    "hotel_scenes": 30,
+    "street_scenes": 36,
+    "other_scenes": 6,
+    "alternations": 63,
+    "avg_scene_length": 4.9,
+    "rest_of_film_avg": 14.4,
+    "intercut_sequence": "OHOOSOHOHOSHSHSHSHSHSHSHSHSHSHSHSSSHSHSHSHSHSSHSHSSHSHSHSHSSHSSHSHSHSSHS"
+  }
+}

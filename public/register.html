@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8,897 Lines of Wasseypur</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Fondamento:ital@0;1&family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&family=Playfair+Display:wght@700&display=swap');
+
+  :root {
+    --bg: #0e0e0e;
+    --page-bg: #161616;
+    --rule: #1e1e1e;
+    --shahid: #870D00;
+    --sardar: #F31700;
+    --faisal: #EF9B00;
+    --definite: #FFDB97;
+    --ramadhir: #777373;
+    --nasir: #D20FA5;
+    --nagma: #7C5DE2;
+    --durga: #5DADE2;
+    --muted: #555;
+    --text: #ddd;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ============ INTRO SECTIONS ============ */
+  .intro-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    position: relative;
+  }
+  .intro-content {
+    max-width: 640px;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .intro-content.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .intro-content p {
+    font-family: 'Fondamento', cursive;
+    font-size: 1.45rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.88);
+    margin-bottom: 1.4em;
+  }
+  .intro-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Floating character bubbles */
+  .intro-section {
+    overflow: hidden;
+  }
+  .intro-bubbles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .intro-content {
+    position: relative;
+    z-index: 1;
+  }
+  .bubble {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--bubble-color, #555);
+    opacity: 0.35;
+    animation: bubbleFloat var(--dur, 8s) ease-in-out infinite var(--delay, 0s);
+  }
+  .bubble img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @keyframes bubbleFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(var(--dx1, 12px), var(--dy1, -18px)) scale(1.04); }
+    50% { transform: translate(var(--dx2, -8px), var(--dy2, 14px)) scale(0.97); }
+    75% { transform: translate(var(--dx3, 15px), var(--dy3, -10px)) scale(1.02); }
+  }
+
+  /* ============ STICKY VIZ ============ */
+  #sticky-viz {
+    position: sticky;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* ============ TOP BAR ============ */
+  #top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 80px;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: opacity 0.8s;
+    border-bottom: 1px solid #222;
+    overflow: hidden;
+  }
+
+  #char-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  #char-img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border-radius: 50%;
+    transition: opacity 0.4s;
+  }
+  #char-img.empty {
+    opacity: 0;
+    width: 0;
+  }
+
+  #char-name {
+    font-family: 'Fondamento', cursive;
+    font-size: 40px;
+    font-weight: 400;
+    margin-left: 10px;
+    transition: color 0.4s;
+    white-space: nowrap;
+  }
+
+  #char-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: #666;
+    margin-left: 16px;
+    white-space: nowrap;
+  }
+
+  #top-right {
+    position: absolute;
+    right: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: #555;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* ============ REGISTER AREA ============ */
+  #register {
+    position: absolute;
+    top: 80px; left: 0; right: 0; bottom: 36px;
+    display: flex;
+    padding: 0 6px;
+    gap: 0;
+    align-items: stretch;
+    transition: opacity 0.8s;
+  }
+
+  /* Each page column */
+  .col {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    background: var(--page-bg);
+    border-right: 1px solid var(--rule);
+    transition: opacity 0.4s;
+  }
+  .col:last-child { border-right: none; }
+
+  /* Mention stroke — a horizontal mark at a y-position */
+  .mark {
+    position: absolute;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    border-radius: 1px;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.3);
+    transition: opacity 0.25s ease, transform 0.25s ease, background 0.3s;
+  }
+  .mark.in {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Dimmed state */
+  .col.dim {
+    opacity: 0.12;
+  }
+  .col.dim .mark {
+    opacity: 0.3;
+  }
+
+  /* Durga glow */
+  .col.glow {
+    opacity: 1 !important;
+    background: #081520;
+    box-shadow: 0 0 20px rgba(126,200,227,0.2), inset 0 0 15px rgba(126,200,227,0.06);
+    z-index: 2;
+  }
+  .col.glow .mark {
+    opacity: 1;
+    height: 3px;
+    box-shadow: 0 0 6px currentColor;
+  }
+
+  /* Script annotation positioned on the register */
+  .script-anno {
+    position: absolute;
+    background: #0C2D3F;
+    border: 1px solid var(--durga);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--durga);
+    z-index: 8;
+    max-width: 320px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .script-anno.vis {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .script-anno em {
+    color: #fff;
+    font-style: italic;
+  }
+  .script-anno .anno-label {
+    font-size: 0.58rem;
+    color: #7EC8E3;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  /* INTERVAL divider */
+  #interval {
+    position: absolute;
+    top: 80px; bottom: 36px;
+    width: 2px;
+    background: #444;
+    z-index: 4;
+    pointer-events: none;
+    transition: opacity 0.8s;
+  }
+  #interval::after {
+    content: 'INTERVAL';
+    position: absolute;
+    top: -16px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: #666;
+    white-space: nowrap;
+  }
+
+  /* ============ QUARTER LABELS ============ */
+  #q-labels {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 36px;
+    display: flex;
+    padding: 0 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: #444;
+    letter-spacing: 0.08em;
+    transition: opacity 0.8s;
+  }
+  .ql {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #222;
+  }
+
+  /* ============ INSIGHT CARD ============ */
+  #card {
+    position: absolute;
+    bottom: 56px;
+    left: 50%;
+    transform: translateX(-50%) translateY(140%);
+    max-width: 540px;
+    width: 90vw;
+    padding: 28px 32px;
+    border-radius: 20px;
+    z-index: 10;
+    opacity: 0;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s;
+    background: rgba(255, 255, 255, 0.01) !important;
+    backdrop-filter: blur(4px) saturate(1.1) brightness(1.05);
+    -webkit-backdrop-filter: blur(4px) saturate(1.1) brightness(1.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-top-color: rgba(255, 255, 255, 0.22);
+    border-left-color: rgba(255, 255, 255, 0.18);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.25),
+      0 2px 8px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 0 20px rgba(255, 255, 255, 0.02);
+  }
+  #card.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  #card.exit-up {
+    transform: translateX(-50%) translateY(-140%);
+    opacity: 0;
+  }
+  #card h3 {
+    font-family: 'Fondamento', cursive;
+    font-size: 1.3rem;
+    font-weight: 400;
+    margin-bottom: 6px;
+    color: #fff;
+    line-height: 1.3;
+  }
+  #card p {
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.88);
+  }
+
+  /* ============ SCRIPT EXCERPT OVERLAY ============ */
+  #script-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s;
+    pointer-events: none;
+  }
+  #script-overlay.hidden {
+    opacity: 0;
+  }
+
+  #script-watermark {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: #2a2a2a;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  #script-block {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.85;
+    color: #777;
+    max-width: 560px;
+    width: 88vw;
+    padding: 2rem;
+    position: relative;
+    white-space: pre-wrap;
+  }
+  #script-block .line-num {
+    color: #2a2a2a;
+    user-select: none;
+    display: inline-block;
+    width: 36px;
+    text-align: right;
+    margin-right: 14px;
+    font-size: 0.65rem;
+  }
+  #script-block .hl {
+    background: var(--sardar);
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 2px;
+    transition: all 0.6s;
+  }
+  #script-block .scene-head {
+    color: #555;
+    font-size: 0.72rem;
+  }
+  #script-block .action {
+    color: #888;
+  }
+  #script-block .dialogue {
+    color: #aaa;
+  }
+
+  #script-caption {
+    font-family: 'Fondamento', cursive;
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 2rem;
+    text-align: center;
+    transition: opacity 0.5s;
+    order: -1;
+  }
+
+  /* Highlight starts hidden, appears with pop */
+  #script-block .hl {
+    background: transparent;
+    color: inherit;
+    padding: 1px 4px;
+    border-radius: 2px;
+    transition: background 0.25s, color 0.25s, box-shadow 0.3s;
+  }
+  #script-block .hl.lit {
+    background: var(--sardar);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(220,20,60,0.4);
+  }
+
+  /* Flying marks — spawned dynamically */
+  .fly {
+    position: fixed;
+    height: 3px;
+    background: var(--sardar);
+    border-radius: 2px;
+    z-index: 30;
+    opacity: 1;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(220,20,60,0.5);
+    transition: left 0.8s cubic-bezier(0.16,1,0.3,1),
+                top 0.8s cubic-bezier(0.16,1,0.3,1),
+                width 0.8s cubic-bezier(0.16,1,0.3,1),
+                height 0.6s ease,
+                opacity 0.5s ease 0.7s;
+  }
+  .fly.landed {
+    width: 3px !important;
+    height: 2px;
+    opacity: 0;
+  }
+
+  /* Multi-character roster in top bar */
+  #char-roster {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 80px;
+  }
+  #char-roster .roster-item {
+    display: flex;
+    align-items: center;
+    height: 80px;
+    transition: opacity 0.3s;
+  }
+  #char-roster .roster-img {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .roster-hidden { display: none; }
+
+  /* Two-face comparison in top bar */
+  #two-faces {
+    display: none;
+    align-items: center;
+    gap: 0;
+    height: 80px;
+  }
+  .face-side {
+    display: flex;
+    align-items: center;
+  }
+  .face-side img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .face-side .face-label {
+    font-family: 'Fondamento', cursive;
+    font-size: 22px;
+    font-weight: 400;
+    margin: 0 8px;
+    white-space: nowrap;
+  }
+  .face-side .face-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: #777;
+    margin-right: 10px;
+  }
+  .vs-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: #555;
+    margin: 0 10px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ============ SCROLL STEPS ============ */
+  .step {
+    height: 100vh;
+  }
+
+  /* ============ EXPLORE MODE ============ */
+  .col.explore-hover {
+    background: #1e1e1e;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+    z-index: 2;
+  }
+
+  #tooltip {
+    position: absolute;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    line-height: 1.6;
+    color: #ccc;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s, transform 0.2s;
+    max-width: 260px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  }
+  #tooltip.vis {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #tooltip .tt-page {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  #tooltip .tt-part {
+    font-size: 0.6rem;
+    color: #666;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  #tooltip .tt-char {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3px;
+  }
+  #tooltip .tt-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  #tooltip .tt-name {
+    flex: 1;
+    color: #aaa;
+  }
+  #tooltip .tt-count {
+    color: #777;
+  }
+
+  #char-toggles {
+    position: absolute;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 12;
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 90vw;
+  }
+  #char-toggles.vis {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .toggle-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: #222;
+    border: 1px solid #333;
+    cursor: pointer;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: #bbb;
+    user-select: none;
+  }
+  .toggle-pill:hover {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+  .toggle-pill.off {
+    opacity: 0.3;
+  }
+  .toggle-pill .pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  #explore-hint {
+    position: absolute;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: #555;
+    letter-spacing: 0.05em;
+    z-index: 12;
+    opacity: 0;
+    transition: opacity 0.8s;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  #explore-hint.vis {
+    opacity: 1;
+  }
+
+  /* Hide marks for toggled-off characters */
+  .mark.char-hidden {
+    opacity: 0 !important;
+    transform: scale(0.3) !important;
+  }
+</style>
+</head>
+<body>
+
+<div class="intro-section">
+  <div class="intro-content" id="intro-1">
+    <p>I was rewatching Gangs of Wasseypur for the third time when I noticed something I'd forgotten.</p>
+    <p>Durga doesn't appear in the middle of the story.</p>
+    <p>She's at the beginning. She's at the end. And in between — nothing.</p>
+  </div>
+</div>
+
+<div class="intro-section" id="intro-section-2">
+  <div class="intro-bubbles" id="intro-bubbles"></div>
+  <div class="intro-content" id="intro-2">
+    <p>GoW has so many characters that each one deserves a spin-off.</p>
+    <p>So I went to the source material.</p>
+    <p>I got the script. Both parts. 288 pages. 8,897 lines.</p>
+    <p>And I asked: who does this story actually belong to?</p>
+  </div>
+</div>
+
+<div id="scroll-wrap">
+  <div id="sticky-viz">
+    <!-- Script excerpt overlay -->
+    <div id="script-overlay">
+      <div id="script-watermark">GOW PART 1 DUB SCRIPT · FOR POST PRODUCTION PURPOSES ONLY</div>
+      <div id="script-block"></div>
+      <div id="script-caption"></div>
+    </div>
+
+    <div id="top-bar">
+      <div id="char-group">
+        <img id="char-img" class="empty" src="" alt="">
+        <span id="char-name"></span>
+        <span id="char-sub"></span>
+      </div>
+      <div id="char-roster" class="roster-hidden"></div>
+      <div id="two-faces">
+        <div class="face-side" id="face-left"></div>
+        <span class="vs-badge">vs.</span>
+        <div class="face-side" id="face-right"></div>
+      </div>
+      <span id="top-right"></span>
+    </div>
+    <div id="register"></div>
+    <div id="interval"></div>
+    <div id="q-labels"></div>
+    <div id="card"><h3 id="ct"></h3><p id="cb"></p></div>
+    <div id="tooltip"></div>
+    <div id="char-toggles"></div>
+    <div id="explore-hint">Hover any page to explore. Toggle characters below.</div>
+  </div>
+
+  <div class="step" data-s="excerpt-1"></div>
+  <div class="step" data-s="excerpt-2"></div>
+  <div class="step" data-s="excerpt-3"></div>
+  <div class="step" data-s="script-to-register"></div>
+  <div class="step" data-s="open"></div>
+  <div class="step" data-s="sardar-obvious"></div>
+  <div class="step" data-s="shahid-crack"></div>
+  <div class="step" data-s="sardar-ratio"></div>
+  <div class="step" data-s="definite-ratio"></div>
+  <div class="step" data-s="all-relay"></div>
+  <div class="step" data-s="nagma-mentions"></div>
+  <div class="step" data-s="nagma-agency"></div>
+  <div class="step" data-s="durga-1"></div>
+  <div class="step" data-s="durga-2"></div>
+  <div class="step" data-s="durga-sixteen"></div>
+  <div class="step" data-s="ramadhir"></div>
+  <div class="step" data-s="nasir-exit"></div>
+  <div class="step" data-s="explore"></div>
+</div>
+
+<script>
+fetch('register.json').then(r=>r.json()).then(data=>{
+
+const reg = document.getElementById('register');
+const topName = document.getElementById('char-name');
+const topSub = document.getElementById('char-sub');
+const topRight = document.getElementById('top-right');
+const topBar = document.getElementById('top-bar');
+const charImg = document.getElementById('char-img');
+const cardEl = document.getElementById('card');
+const charRoster = document.getElementById('char-roster');
+const twoFaces = document.getElementById('two-faces');
+const faceLeft = document.getElementById('face-left');
+const faceRight = document.getElementById('face-right');
+const ct = document.getElementById('ct');
+const cb = document.getElementById('cb');
+let currentCardTitle = null;
+let cardTransitionTimer = null;
+const interval = document.getElementById('interval');
+const qLabels = document.getElementById('q-labels');
+const scriptOverlay = document.getElementById('script-overlay');
+const scriptBlock = document.getElementById('script-block');
+const scriptCaption = document.getElementById('script-caption');
+
+// Sardar's actual first page appearances (from register.json) — indices of pages with sardar marks
+let sardarPages = [];
+data.forEach((pg,i) => { if(pg.marks.sardar && pg.marks.sardar.length) sardarPages.push({idx:i, y:pg.marks.sardar[0]}); });
+
+let hlTimer = null; // for sequential highlight animation
+let flyCleanup = []; // flying mark elements to clean up
+
+const N = data.length;
+const p1N = data.filter(d=>d.part===1).length;
+
+const colors = {
+  shahid:'#870D00', sardar:'#F31700', faisal:'#EF9B00', definite:'#FFDB97',
+  ramadhir:'#777373', nasir:'#D20FA5', nagma:'#7C5DE2', mohsina:'#5DADE2',
+  durga:'#5DADE2', sultan:'#6C3483'
+};
+
+// Character images — file-based (drop PNGs into /img/ folder)
+const charImages = {
+  shahid:   'img/shahid.png',
+  sardar:   'img/sardar.png',
+  faisal:   'img/faisal.png',
+  definite: 'img/definite.png',
+  ramadhir: 'img/ramadhir.png',
+  nasir:    'img/nasir.png',
+  nagma:    'img/nagma.png',
+  durga:    'img/durga.png',
+};
+
+// Build columns
+const cols = [];
+data.forEach((pg,i)=>{
+  const col = document.createElement('div');
+  col.className = 'col';
+  col.dataset.i = i;
+  reg.appendChild(col);
+  cols.push({el:col, pg});
+});
+
+// Position interval
+function posInterval(){
+  const rr = reg.getBoundingClientRect();
+  interval.style.left = (rr.left + (rr.width/N)*p1N) + 'px';
+}
+posInterval();
+window.addEventListener('resize', posInterval);
+
+// Quarter labels
+const qs = [
+  {l:'P1 · Q1',w:30},{l:'Q2',w:29},{l:'Q3',w:30},{l:'Q4',w:29},
+  {l:'P2 · Q1',w:43},{l:'Q2',w:42},{l:'Q3',w:43},{l:'Q4',w:42}
+];
+qs.forEach(q=>{
+  const d = document.createElement('div');
+  d.className='ql'; d.style.flex=q.w; d.textContent=q.l;
+  qLabels.appendChild(d);
+});
+
+// ============ TOP BAR HELPER ============
+const rosterChars = ['shahid','sardar','faisal','definite','nagma','durga','ramadhir','nasir'];
+const rosterNames = {shahid:'Shahid',sardar:'Sardar',faisal:'Faisal',definite:'Definite',nagma:'Nagma',durga:'Durga',ramadhir:'Ramadhir',nasir:'Nasir'};
+
+// Build roster once
+rosterChars.forEach(ck => {
+  const item = document.createElement('div');
+  item.className = 'roster-item';
+  item.dataset.char = ck;
+  const img = document.createElement('img');
+  img.className = 'roster-img';
+  img.src = charImages[ck] || '';
+  img.alt = rosterNames[ck];
+  item.appendChild(img);
+  charRoster.appendChild(item);
+});
+
+function showRoster(filterChars) {
+  document.getElementById('char-group').style.display = 'none';
+  twoFaces.style.display = 'none';
+  charRoster.classList.remove('roster-hidden');
+  charRoster.style.display = 'flex';
+  // Filter roster items if a list is provided
+  charRoster.querySelectorAll('.roster-item').forEach(item => {
+    if(filterChars && filterChars.length) {
+      item.style.display = filterChars.includes(item.dataset.char) ? '' : 'none';
+    } else {
+      item.style.display = '';
+    }
+  });
+}
+
+function hideRoster() {
+  document.getElementById('char-group').style.display = 'flex';
+  charRoster.classList.add('roster-hidden');
+  charRoster.style.display = 'none';
+  twoFaces.style.display = 'none';
+}
+
+function showTwoFaces(leftKey, rightKey, leftCount, rightCount) {
+  document.getElementById('char-group').style.display = 'none';
+  charRoster.style.display = 'none';
+  twoFaces.style.display = 'flex';
+  faceLeft.innerHTML = '<img src="'+charImages[leftKey]+'" alt=""><span class="face-label" style="color:'+colors[leftKey]+'">'+rosterNames[leftKey]+'</span><span class="face-count">'+leftCount+'</span>';
+  faceRight.innerHTML = '<img src="'+charImages[rightKey]+'" alt=""><span class="face-label" style="color:'+colors[rightKey]+'">'+rosterNames[rightKey]+'</span><span class="face-count">'+rightCount+'</span>';
+}
+
+function setTopBar(charKey, name, sub, right) {
+  hideRoster();
+  twoFaces.style.display = 'none';
+  topName.textContent = name || '';
+  topSub.textContent = sub || '';
+  topRight.textContent = right || '';
+
+  const color = charKey ? (colors[charKey] || '#666') : '#666';
+  topName.style.color = color;
+
+  if (charKey && charImages[charKey]) {
+    charImg.src = charImages[charKey];
+    charImg.classList.remove('empty');
+  } else {
+    charImg.classList.add('empty');
+    charImg.src = '';
+  }
+}
+
+// Track animation timers so we can cancel
+let renderTimers = [];
+
+function cancelRender() {
+  renderTimers.forEach(t => clearTimeout(t));
+  renderTimers = [];
+}
+
+// ============ RENDER FUNCTION ============
+// charKeys: array of character ids to show
+// opts: {highlight, cardBg, cardTitle, cardBody, name, sub, right, glowDurga, instant, charKey}
+function render(charKeys, opts={}){
+  cancelRender();
+
+  // Top bar — use charKey for image/strip, or first charKey
+  const ck = opts.charKey || (charKeys.length === 1 ? charKeys[0] : null);
+  setTopBar(ck, opts.name, opts.sub, opts.right);
+
+  // Clear marks
+  cols.forEach(c=>{
+    c.el.querySelectorAll('.mark').forEach(m=>m.remove());
+    c.el.className = 'col';
+  });
+
+  // Clear any Durga annotations
+  reg.querySelectorAll('.script-anno').forEach(a => a.remove());
+
+  // Collect all marks with their column index for sequencing
+  const allMarks = [];
+
+  cols.forEach((c,i)=>{
+    const pg = c.pg;
+
+    // Dim logic
+    if(opts.highlight){
+      const [s,e] = opts.highlight;
+      if(i<s || i>=e) c.el.classList.add('dim');
+    }
+
+    // Durga glow
+    if(opts.glowDurga && pg.da){
+      c.el.classList.add('glow');
+    }
+    if(opts.glowDurga && !pg.da){
+      c.el.classList.add('dim');
+    }
+
+    // Create marks (hidden) and collect them
+    charKeys.forEach(ck=>{
+      const positions = pg.marks[ck];
+      if(!positions) return;
+      const color = colors[ck] || '#888';
+      positions.forEach(y=>{
+        const mark = document.createElement('div');
+        mark.className = 'mark';
+        mark.dataset.char = ck;
+        mark.style.top = (y*100)+'%';
+        mark.style.background = color;
+        c.el.appendChild(mark);
+        allMarks.push({el: mark, col: i});
+      });
+    });
+  });
+
+  // Animate marks in — sweep left to right
+  // Group by column, then stagger groups
+  if(opts.instant) {
+    // No animation — used during mid-transition renders
+    allMarks.forEach(m => m.el.classList.add('in'));
+  } else {
+    // Sort by column index
+    allMarks.sort((a,b) => a.col - b.col);
+    
+    // Calculate timing: sweep across 288 columns in ~1.5s
+    // Each column's marks appear together, delay based on column position
+    const sweepDuration = 1500; // ms total for full sweep
+    const maxCol = N;
+    
+    allMarks.forEach(m => {
+      const delay = (m.col / maxCol) * sweepDuration;
+      const t = setTimeout(() => {
+        m.el.classList.add('in');
+      }, delay);
+      renderTimers.push(t);
+    });
+  }
+
+  // Card
+  if(opts.cardTitle){
+    if(cardTransitionTimer) { clearTimeout(cardTransitionTimer); cardTransitionTimer = null; }
+    if(currentCardTitle && currentCardTitle !== opts.cardTitle && cardEl.classList.contains('show')){
+      // Slide current card UP off-screen
+      cardEl.classList.remove('show');
+      cardEl.classList.add('exit-up');
+      cardTransitionTimer = setTimeout(() => {
+        // Reset to below (no transition) then slide in
+        cardEl.classList.remove('exit-up');
+        cardEl.style.transition = 'none';
+        // Force back to default translateY(140%) position
+        void cardEl.offsetHeight; // flush
+        cardEl.style.transition = '';
+        ct.textContent = opts.cardTitle;
+        cb.innerHTML = opts.cardBody || '';
+        cardEl.style.background = 'transparent';
+        // Small delay to let the browser apply the reset position
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            cardEl.classList.add('show');
+          });
+        });
+        cardTransitionTimer = null;
+      }, 420);
+    } else {
+      ct.textContent = opts.cardTitle;
+      cb.innerHTML = opts.cardBody || '';
+      cardEl.style.background = 'transparent';
+      cardEl.classList.add('show');
+    }
+    currentCardTitle = opts.cardTitle;
+  } else {
+    cardEl.classList.remove('show');
+    currentCardTitle = null;
+  }
+}
+
+// ============ SCRIPT EXCERPT — 3 blocks shown one at a time ============
+const excerpts = [
+  [
+    {type:'scene', text:'48 EXT. VILLAGE ROAD 2 – DAY | 1941', num:524},
+    {type:'action', text:'SHAHID is by his wife\'s grave along with Young Nasir.', num:525},
+    {type:'action', text:'They have just buried her. Baby (<span class="hl">Sardar Khan</span>) is held', num:526},
+    {type:'action', text:'by Nasir who hands over to Shahid.', num:527},
+  ],
+  [
+    {type:'scene', text:'51 EXT. COAL MINE 1 – DAY | 1947', num:529},
+    {type:'action', text:'SHAHID walks with his son to the coal mines.', num:530},
+    {type:'action', text:'YOUNG <span class="hl">SARDAR</span> sits in a corner.. As SHAHID walks in..', num:531},
+  ],
+  [
+    {type:'scene', text:'64 I/E. SHAHID\'S HUT – NIGHT | 1947', num:533},
+    {type:'action', text:'Young <span class="hl">Sardar</span> notices an umbrella lying near the door.', num:534},
+    {type:'action', text:'It\'s Ramadhir\'s.', num:535},
+    {type:'action', text:'NASIR looks at the umbrella.. Looks at YOUNG <span class="hl">SARDAR</span>.', num:536},
+  ],
+];
+
+function renderExcerpts(upTo) {
+  showScriptOverlay();
+  let html = '';
+  for(let b = 0; b <= upTo && b < excerpts.length; b++) {
+    const block = excerpts[b];
+    const isNew = (b === upTo);
+    block.forEach(sl => {
+      if(sl.type === 'blank') { html += '\n'; return; }
+      const num = '<span class="line-num">' + sl.num + '</span>';
+      const cls = sl.type === 'scene' ? 'scene-head' : 'action';
+      // New block: include hl spans for animation. Older blocks: show lit highlights.
+      if(b < upTo) {
+        // Already shown — highlights already lit
+        html += num + '<span class="' + cls + '">' + sl.text.replace(/class="hl"/g, 'class="hl lit"') + '</span>\n';
+      } else {
+        // Current block — highlights start hidden
+        html += num + '<span class="' + cls + '">' + sl.text + '</span>\n';
+      }
+    });
+    html += '\n'; // blank line between blocks
+  }
+  scriptBlock.innerHTML = html;
+
+  // Animate highlights in the newest block
+  const allHl = scriptBlock.querySelectorAll('.hl:not(.lit)');
+  allHl.forEach((h, i) => {
+    hlTimer = setTimeout(() => { h.classList.add('lit'); }, 400 + i * 300);
+  });
+
+  // Captions
+  const captions = [
+    'Every mention. Every name. Both scripts.',
+    '8,897 lines.',
+    'Every character. Every mention. Mapped.'
+  ];
+  scriptCaption.textContent = captions[upTo] || '';
+  scriptCaption.style.opacity = '1';
+}
+
+function showScriptOverlay() {
+  cancelRender();
+  scriptOverlay.classList.remove('hidden');
+  topBar.style.opacity = '0';
+  reg.style.opacity = '0';
+  interval.style.opacity = '0';
+  qLabels.style.opacity = '0';
+  cardEl.classList.remove('show');
+  currentCardTitle = null;
+  if(cardTransitionTimer) { clearTimeout(cardTransitionTimer); cardTransitionTimer = null; }
+  charImg.classList.add('empty');
+  // Clean up any flying marks
+  flyCleanup.forEach(el => el.remove());
+  flyCleanup = [];
+  if(hlTimer) { clearTimeout(hlTimer); hlTimer = null; }
+}
+
+function hideScriptOverlay() {
+  scriptOverlay.classList.add('hidden');
+  topBar.style.opacity = '1';
+  reg.style.opacity = '1';
+  interval.style.opacity = '1';
+  qLabels.style.opacity = '1';
+  // Clean up flights
+  flyCleanup.forEach(el => el.remove());
+  flyCleanup = [];
+}
+
+// ============ STEP DEFINITIONS ============
+
+const steps = {
+  'excerpt-1': ()=> renderExcerpts(0),
+  'excerpt-2': ()=> renderExcerpts(1),
+  'excerpt-3': ()=> renderExcerpts(2),
+
+  'script-to-register': ()=>{
+    cancelRender();
+
+    // Set up top bar and chrome
+    setTopBar('sardar', 'Sardar Khan', '430 mentions', 'Every red mark = one mention in the script');
+    topBar.style.opacity = '1';
+    reg.style.opacity = '1';
+    interval.style.opacity = '1';
+    qLabels.style.opacity = '1';
+
+    // Clear existing marks
+    cols.forEach(c => {
+      c.el.querySelectorAll('.mark').forEach(m => m.remove());
+      c.el.className = 'col';
+    });
+
+    // Pre-create ALL sardar marks (hidden)
+    const allMarks = [];
+    cols.forEach((c, i) => {
+      const positions = c.pg.marks.sardar;
+      if (!positions) return;
+      positions.forEach(y => {
+        const mark = document.createElement('div');
+        mark.className = 'mark';
+        mark.dataset.char = 'sardar';
+        mark.style.top = (y * 100) + '%';
+        mark.style.background = colors.sardar;
+        c.el.appendChild(mark);
+        allMarks.push({ el: mark, col: i, y: y });
+      });
+    });
+
+    // Get all highlights in the excerpt
+    const hls = scriptBlock.querySelectorAll('.hl.lit');
+    const regRect = reg.getBoundingClientRect();
+    const colWidth = regRect.width / N;
+
+    // Phase 1: Fly each highlight to a real mark position
+    // Map each highlight to the earliest un-targeted sardar mark
+    let targetIdx = 0;
+    const flightCount = hls.length;
+
+    hls.forEach((h, i) => {
+      const hlRect = h.getBoundingClientRect();
+      const target = allMarks[Math.min(targetIdx, allMarks.length - 1)];
+      targetIdx++;
+      const colRect = cols[target.col].el.getBoundingClientRect();
+      const targetX = colRect.left + colRect.width * 0.1;
+      const targetY = colRect.top + colRect.height * target.y;
+
+      setTimeout(() => {
+        const fly = document.createElement('div');
+        fly.className = 'fly';
+        fly.style.left = hlRect.left + 'px';
+        fly.style.top = hlRect.top + 'px';
+        fly.style.width = hlRect.width + 'px';
+        document.body.appendChild(fly);
+        flyCleanup.push(fly);
+
+        h.style.opacity = '0.2';
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            fly.style.left = targetX + 'px';
+            fly.style.top = targetY + 'px';
+            fly.classList.add('landed');
+
+            // When this flight lands, reveal the real mark underneath
+            setTimeout(() => {
+              target.el.classList.add('in');
+            }, 600);
+          });
+        });
+      }, i * 200);
+    });
+
+    // Phase 2: After flights complete, sweep remaining marks left-to-right
+    const flightDuration = flightCount * 200 + 800;
+
+    const sweepTimer = setTimeout(() => {
+      // Fade out the excerpt overlay
+      scriptOverlay.classList.add('hidden');
+      // Clean flying elements
+      flyCleanup.forEach(el => el.remove());
+      flyCleanup = [];
+
+      // Reveal remaining marks in a sweep
+      const remaining = allMarks.filter(m => !m.el.classList.contains('in'));
+      remaining.sort((a, b) => a.col - b.col);
+
+      const sweepDuration = 1200;
+      const maxCol = N;
+      remaining.forEach(m => {
+        const delay = (m.col / maxCol) * sweepDuration;
+        const t = setTimeout(() => {
+          m.el.classList.add('in');
+        }, delay);
+        renderTimers.push(t);
+      });
+
+      // Show card after sweep — only the first part
+      const cardTimer = setTimeout(() => {
+        ct.textContent = 'Each mark is a line where his name appears.';
+        cb.innerHTML = '430 mentions. Each one placed at the exact line in the script where Sardar Khan\'s name appears.';
+        cardEl.style.background = 'rgba(91,10,0,0.5)';
+        cardEl.classList.add('show');
+        currentCardTitle = 'Each mark is a line where his name appears.';
+      }, sweepDuration + 200);
+      renderTimers.push(cardTimer);
+    }, flightDuration);
+    renderTimers.push(sweepTimer);
+  },
+
+  'open': ()=>{
+    hideScriptOverlay();
+    showRoster();
+    topRight.textContent = '288 pages · 8,897 lines';
+    render(
+      ['shahid','sardar','faisal','definite','ramadhir','nasir','nagma','mohsina','durga','sultan'],
+      {name:'', sub:'', right:'288 pages · 8,897 lines',
+       cardBg:'rgba(50,50,50,0.45)',
+       cardTitle:'We did this for every character.',
+       cardBody:'Every page. Both films. 288 pages became 288 columns. 8,897 lines became 2,633 marks. This is the entire saga — read as data.'}
+    );
+    showRoster();
+  },
+
+  'sardar-obvious': ()=> render(
+    ['sardar'],
+    {name:'Sardar Khan', sub:'430 mentions', right:'Gen 2 · The one everyone remembers',
+     cardBg:'rgba(91,10,0,0.5)',
+     cardTitle:'The film everyone remembers.',
+     cardBody:'Ask anyone what Gangs of Wasseypur is about and they\'ll say Sardar Khan. 430 mentions. More per page than any other character. The data confirms what you already believe.'}
+  ),
+
+  'shahid-crack': ()=> render(
+    ['shahid'],
+    {name:'Shahid Khan', sub:'110 mentions', right:'Gen 1',
+     highlight:[0,30],
+     cardBg:'rgba(69,7,0,0.5)',
+     cardTitle:'Except the saga doesn\'t start with Sardar.',
+     cardBody:'It starts with his father. Shahid Khan has 110 mentions — all in the first 30 pages. Then he\'s shot. Not a slow decline. An amputation. Zero mentions for the next 258 pages.'}
+  ),
+
+  'sardar-ratio': ()=> render(
+    ['sardar','shahid'],
+    {name:'Sardar Khan', sub:'Q1: 32 mentions', right:'29% of Shahid\'s presence',
+     highlight:[0,30],
+     cardBg:'rgba(91,10,0,0.5)',
+     cardTitle:'While his father is alive, Sardar has 32 mentions.',
+     cardBody:'That\'s 29% of Shahid\'s presence. The protagonist of the saga doesn\'t exist in its opening act. He\'s in the frame — eating, sleeping, loitering — but the script is looking away from him.'}
+  ),
+
+  'definite-ratio': ()=> render(
+    ['definite'],
+    {name:'Definite', sub:'P2-Q1: 4 mentions', right:'4% of Faisal\'s presence',
+     charKey:'definite',
+     highlight:[118,161],
+     cardBg:'rgba(107,72,0,0.5)',
+     cardTitle:'The saga does this again. More aggressively.',
+     cardBody:'Definite has 4 mentions in Part 2\'s first quarter. That\'s 4%. Not 29%. Four percent. The reader who remembers Faisal running Wasseypur doesn\'t remember Definite in the room at all. That\'s the point.'}
+  ),
+
+  'all-relay': ()=>{
+    render(
+      ['shahid','sardar','faisal','definite'],
+      {name:'', sub:'', right:'Each color = one character',
+       cardBg:'rgba(68,68,68,0.45)',
+       cardTitle:'Every successor is invisible until their predecessor dies.',
+       cardBody:'The saga repeats its own trick four times. Each time, the suppression deepens — from 29% to 4%. Each time, death is the inflection point. Across 288 pages, this is a structural law.'}
+    );
+    showRoster(['shahid','sardar','faisal','definite']);
+  },
+
+  'nagma-mentions': ()=>{
+    render(
+      ['nagma','ramadhir'],
+      {name:'', sub:'', right:'Same volume. Opposite power.',
+       cardBg:'rgba(42,32,102,0.5)',
+       cardTitle:'231 vs. 234.',
+       cardBody:'Nagma, the matriarch. 231 mentions.<br>Ramadhir Singh, the villain. 234 mentions.<br><br>Three apart. Look at the register — the density is almost identical.'}
+    );
+    showTwoFaces('nagma','ramadhir','231 mentions','234 mentions');
+  },
+
+  'nagma-agency': ()=>{
+    render(
+      ['nagma','ramadhir'],
+      {name:'', sub:'', right:'What they say is opposite.',
+       cardBg:'rgba(42,32,102,0.5)',
+       cardTitle:'Same presence. Opposite power.',
+       cardBody:'<div style="font-family:IBM Plex Sans,sans-serif;font-size:0.82rem;"><div style="margin-bottom:14px;"><div style="color:var(--nagma);font-weight:700;margin-bottom:6px;">Nagma\'s dialogue</div><div style="display:flex;height:20px;gap:2px;border-radius:3px;overflow:hidden;"><div style="flex:34;background:var(--nagma);opacity:0.9;"></div><div style="flex:20;background:var(--nagma);opacity:0.55;"></div><div style="flex:6;background:var(--nagma);opacity:0.3;"></div><div style="flex:40;background:#ffffff15;"></div></div><div style="display:flex;gap:2px;font-size:0.6rem;color:#aaa;margin-top:4px;"><span style="flex:34;">Questions 34%</span><span style="flex:20;">Commands 20%</span><span style="flex:6;">Grief</span><span style="flex:40;">Other</span></div></div><div><div style="color:var(--ramadhir);font-weight:700;margin-bottom:6px;">Ramadhir\'s dialogue</div><div style="display:flex;height:20px;gap:2px;border-radius:3px;overflow:hidden;"><div style="flex:70;background:var(--ramadhir);opacity:0.6;"></div><div style="flex:30;background:#ffffff15;"></div></div><div style="display:flex;gap:2px;font-size:0.6rem;color:#aaa;margin-top:4px;"><span style="flex:70;">Commands ~70%</span><span style="flex:30;">Other</span></div></div><div style="margin-top:14px;font-style:italic;color:rgba(255,255,255,0.8);font-size:0.85rem;">She asks. He orders. The saga gives its women volume and withholds power.</div></div>'}
+    );
+    showTwoFaces('nagma','ramadhir','231 mentions','234 mentions');
+  },
+
+  'durga-1': ()=>{
+    setTopBar('durga', 'Durga', '62 mentions · 16 lines', '');
+    cancelRender();
+    // Clear and set up glow state
+    cols.forEach(c => {
+      c.el.querySelectorAll('.mark').forEach(m => m.remove());
+      c.el.className = 'col';
+      const pg = c.pg;
+      if(pg.da) { c.el.classList.add('glow'); } else { c.el.classList.add('dim'); }
+      // Draw durga marks
+      const positions = pg.marks.durga;
+      if(positions) {
+        positions.forEach(y => {
+          const mark = document.createElement('div');
+          mark.className = 'mark in';
+          mark.dataset.char = 'durga';
+          mark.style.top = (y*100)+'%';
+          mark.style.background = colors.durga;
+          c.el.appendChild(mark);
+        });
+      }
+    });
+    // Remove old annotations
+    reg.querySelectorAll('.script-anno').forEach(a => a.remove());
+    // Position annotation at page 119 (index 118)
+    const col119 = cols[118];
+    const anno1 = document.createElement('div');
+    anno1.className = 'script-anno';
+    anno1.innerHTML = '<span class="anno-label">Page 119</span><em>"Woh nikal gaye hain."</em><br>She makes the phone call. Sardar is shot.';
+    // Position to the right of the glowing column
+    const colRect = col119.el.getBoundingClientRect();
+    const regRect = reg.getBoundingClientRect();
+    anno1.style.left = (colRect.right - regRect.left + 12) + 'px';
+    anno1.style.top = (colRect.height * 0.35) + 'px';
+    reg.appendChild(anno1);
+    requestAnimationFrame(() => { requestAnimationFrame(() => { anno1.classList.add('vis'); }); });
+    cardEl.classList.remove('show');
+  },
+
+  'durga-2': ()=>{
+    setTopBar('durga', 'Durga', '62 mentions · 16 lines', '');
+    cancelRender();
+    cols.forEach(c => {
+      c.el.querySelectorAll('.mark').forEach(m => m.remove());
+      c.el.className = 'col';
+      const pg = c.pg;
+      if(pg.da) { c.el.classList.add('glow'); } else { c.el.classList.add('dim'); }
+      const positions = pg.marks.durga;
+      if(positions) {
+        positions.forEach(y => {
+          const mark = document.createElement('div');
+          mark.className = 'mark in';
+          mark.dataset.char = 'durga';
+          mark.style.top = (y*100)+'%';
+          mark.style.background = colors.durga;
+          c.el.appendChild(mark);
+        });
+      }
+    });
+    // Remove old annotations
+    reg.querySelectorAll('.script-anno').forEach(a => a.remove());
+    // Annotation 1 — already visible from page 119
+    const col119 = cols[118];
+    const anno1 = document.createElement('div');
+    anno1.className = 'script-anno vis';
+    anno1.innerHTML = '<span class="anno-label">Page 119</span><em>"Woh nikal gaye hain."</em><br>She makes the phone call. Sardar is shot.';
+    const colRect1 = col119.el.getBoundingClientRect();
+    const regRect = reg.getBoundingClientRect();
+    anno1.style.left = (colRect1.right - regRect.left + 12) + 'px';
+    anno1.style.top = (colRect1.el ? 0 : regRect.height * 0.35) + 'px';
+    anno1.style.top = (regRect.height * 0.3) + 'px';
+    reg.appendChild(anno1);
+    // Annotation 2 — appears at page 288 (index 287)
+    const col288 = cols[287];
+    const anno2 = document.createElement('div');
+    anno2.className = 'script-anno';
+    anno2.innerHTML = '<span class="anno-label">Page 288</span><em>"Definite walks up to Durga."</em><br>The saga ends where it began. With her.';
+    const colRect2 = col288.el.getBoundingClientRect();
+    anno2.style.right = (regRect.right - colRect2.left + 12) + 'px';
+    anno2.style.left = 'auto';
+    anno2.style.top = (regRect.height * 0.55) + 'px';
+    reg.appendChild(anno2);
+    requestAnimationFrame(() => { requestAnimationFrame(() => { anno2.classList.add('vis'); }); });
+    cardEl.classList.remove('show');
+  },
+
+  'durga-sixteen': ()=>{
+    // Keep durga state but clear annotations and show the 16 card
+    cancelRender();
+    cols.forEach(c => {
+      c.el.querySelectorAll('.mark').forEach(m => m.remove());
+      c.el.className = 'col';
+      const pg = c.pg;
+      if(pg.da) { c.el.classList.add('glow'); } else { c.el.classList.add('dim'); }
+      const positions = pg.marks.durga;
+      if(positions) {
+        positions.forEach(y => {
+          const mark = document.createElement('div');
+          mark.className = 'mark in';
+          mark.dataset.char = 'durga';
+          mark.style.top = (y*100)+'%';
+          mark.style.background = colors.durga;
+          c.el.appendChild(mark);
+        });
+      }
+    });
+    reg.querySelectorAll('.script-anno').forEach(a => a.remove());
+    setTopBar('durga', '16', '', '');
+    ct.textContent = '16 dialogue lines.';
+    cb.innerHTML = 'She speaks less than almost anyone. She bookends 288 pages with the two most consequential actions in the saga. The phone call that starts the cycle. The silent presence that ends it. The most powerful character in Gangs of Wasseypur is the one nobody remembers.';
+    cardEl.style.background = 'rgba(15,61,92,0.5)';
+    cardEl.classList.add('show');
+  },
+
+  'ramadhir': ()=> render(
+    ['ramadhir'],
+    {name:'Ramadhir Singh', sub:'234 mentions', right:'Never disappears',
+     cardBg:'rgba(42,42,42,0.45)',
+     cardTitle:'The constant.',
+     cardBody:'Present on 60 of 288 pages. He dips once to near-zero. He never breaks. Four generations of Khans rise and fall. He endures. When Faisal finally shoots him, Nasir tells us it changed nothing.'}
+  ),
+
+  'nasir-exit': ()=> render(
+    ['nasir'],
+    {name:'Nasir Khan (V.O.)', sub:'277 mentions · 67 voiceovers · 0 violence', right:'Mumbai, 2009',
+     cardBg:'rgba(94,8,72,0.5)',
+     cardTitle:'Nothing changed.',
+     cardBody:'8,897 lines. 288 pages. 64 years. Four dead Khans. One surviving narrator. And a woman with 16 dialogue lines who, from the first phone call to the last gunshot, held all of it together.'}
+  ),
+
+  'explore': ()=>{
+    exploreMode = true;
+    hideScriptOverlay();
+    hideRoster();
+    setTopBar(null, '', '', '288 pages · 10 characters · Explore the register');
+    cardEl.classList.remove('show');
+
+    // Render all characters at once
+    const allChars = ['shahid','sardar','faisal','definite','ramadhir','nasir','nagma','mohsina','durga','sultan'];
+    render(allChars, {name:'', sub:'', right:'288 pages · 10 characters · Explore the register', instant:true});
+
+    // Apply current toggle state
+    applyToggles();
+
+    // Show toggles and hint
+    charTogglesEl.classList.add('vis');
+    exploreHint.classList.add('vis');
+    setTimeout(()=>{ exploreHint.classList.remove('vis'); }, 5000);
+  },
+};
+
+// ============ EXPLORE MODE STATE ============
+let exploreMode = false;
+const allCharKeys = ['shahid','sardar','faisal','definite','ramadhir','nasir','nagma','mohsina','durga','sultan'];
+const charLabels = {shahid:'Shahid',sardar:'Sardar',faisal:'Faisal',definite:'Definite',ramadhir:'Ramadhir',nasir:'Nasir',nagma:'Nagma',mohsina:'Mohsina',durga:'Durga',sultan:'Sultan'};
+const activeChars = new Set(allCharKeys);
+const charTogglesEl = document.getElementById('char-toggles');
+const tooltipEl = document.getElementById('tooltip');
+const exploreHint = document.getElementById('explore-hint');
+
+// Build toggle pills
+allCharKeys.forEach(ck => {
+  const pill = document.createElement('div');
+  pill.className = 'toggle-pill';
+  pill.dataset.char = ck;
+  pill.innerHTML = '<span class="pill-dot" style="background:'+colors[ck]+'"></span>' + charLabels[ck];
+  pill.addEventListener('click', ()=>{
+    if(activeChars.has(ck)) { activeChars.delete(ck); pill.classList.add('off'); }
+    else { activeChars.add(ck); pill.classList.remove('off'); }
+    applyToggles();
+  });
+  charTogglesEl.appendChild(pill);
+});
+
+function applyToggles() {
+  cols.forEach(c => {
+    c.el.querySelectorAll('.mark').forEach(m => {
+      if(activeChars.has(m.dataset.char)) m.classList.remove('char-hidden');
+      else m.classList.add('char-hidden');
+    });
+  });
+}
+
+// ============ COLUMN HOVER ============
+cols.forEach((c, i) => {
+  c.el.addEventListener('mouseenter', ()=>{
+    if(!exploreMode) return;
+    c.el.classList.add('explore-hover');
+    // Hide the hint on first interaction
+    exploreHint.classList.remove('vis');
+    // Build tooltip
+    const pg = c.pg;
+    let html = '<div class="tt-page">Page ' + pg.p + '</div>';
+    html += '<div class="tt-part">Part ' + pg.part + ' · ' + pg.n + ' lines</div>';
+    let hasChars = false;
+    allCharKeys.forEach(ck => {
+      const marks = pg.marks[ck];
+      if(!marks || !marks.length) return;
+      if(!activeChars.has(ck)) return;
+      hasChars = true;
+      html += '<div class="tt-char"><span class="tt-dot" style="background:'+colors[ck]+'"></span><span class="tt-name">'+charLabels[ck]+'</span><span class="tt-count">'+marks.length+'</span></div>';
+    });
+    if(!hasChars) html += '<div style="color:#555;font-style:italic;">No visible marks</div>';
+    tooltipEl.innerHTML = html;
+    tooltipEl.classList.add('vis');
+  });
+
+  c.el.addEventListener('mouseleave', ()=>{
+    if(!exploreMode) return;
+    c.el.classList.remove('explore-hover');
+    tooltipEl.classList.remove('vis');
+  });
+
+  c.el.addEventListener('mousemove', (e)=>{
+    if(!exploreMode) return;
+    const vizRect = document.getElementById('sticky-viz').getBoundingClientRect();
+    let x = e.clientX - vizRect.left + 14;
+    let y = e.clientY - vizRect.top - 10;
+    // Clamp to right edge
+    if(x + 260 > vizRect.width) x = e.clientX - vizRect.left - 270;
+    // Clamp to bottom
+    if(y + 200 > vizRect.height) y = vizRect.height - 210;
+    if(y < 60) y = 60;
+    tooltipEl.style.left = x + 'px';
+    tooltipEl.style.top = y + 'px';
+  });
+});
+
+// Deactivate explore mode when scrolling back to narrative steps
+function deactivateExplore() {
+  if(!exploreMode) return;
+  exploreMode = false;
+  charTogglesEl.classList.remove('vis');
+  exploreHint.classList.remove('vis');
+  tooltipEl.classList.remove('vis');
+  cols.forEach(c => c.el.classList.remove('explore-hover'));
+}
+
+// ============ SCROLL OBSERVER ============
+const stepEls = document.querySelectorAll('.step');
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const s = e.target.dataset.s;
+    if(s !== 'explore') deactivateExplore();
+    if(steps[s]) steps[s]();
+  });
+},{threshold:0.45});
+stepEls.forEach(s=>obs.observe(s));
+
+// Init — start with first excerpt
+steps['excerpt-1']();
+
+// ============ INTRO FADE-IN OBSERVER ============
+const introEls = document.querySelectorAll('.intro-content');
+const introObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.classList.add('visible');
+    } else {
+      e.target.classList.remove('visible');
+    }
+  });
+}, {threshold: 0.3});
+introEls.forEach(el => introObs.observe(el));
+
+// ============ FLOATING BUBBLES ============
+(function(){
+  const container = document.getElementById('intro-bubbles');
+  if(!container) return;
+  const chars = [
+    {key:'shahid', color:'#870D00'},
+    {key:'sardar', color:'#F31700'},
+    {key:'faisal', color:'#EF9B00'},
+    {key:'definite', color:'#FFDB97'},
+    {key:'ramadhir', color:'#777373'},
+    {key:'nasir', color:'#D20FA5'},
+    {key:'nagma', color:'#7C5DE2'},
+    {key:'durga', color:'#5DADE2'},
+  ];
+  const positions = [
+    {top:'6%',  left:'42%'},
+    {top:'18%', left:'8%'},
+    {top:'35%', left:'18%'},
+    {top:'55%', left:'4%'},
+    {top:'8%',  right:'8%'},
+    {top:'28%', right:'4%'},
+    {bottom:'18%', left:'50%'},
+    {bottom:'12%', right:'6%'},
+  ];
+  chars.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'bubble';
+    el.style.setProperty('--bubble-color', c.color);
+    el.style.setProperty('--dur', (6 + Math.random()*6) + 's');
+    el.style.setProperty('--delay', (-Math.random()*8) + 's');
+    el.style.setProperty('--dx1', (8 + Math.random()*16) + 'px');
+    el.style.setProperty('--dy1', -(10 + Math.random()*20) + 'px');
+    el.style.setProperty('--dx2', -(6 + Math.random()*14) + 'px');
+    el.style.setProperty('--dy2', (8 + Math.random()*18) + 'px');
+    el.style.setProperty('--dx3', (10 + Math.random()*12) + 'px');
+    el.style.setProperty('--dy3', -(6 + Math.random()*16) + 'px');
+    const pos = positions[i];
+    Object.keys(pos).forEach(k => el.style[k] = pos[k]);
+    const img = document.createElement('img');
+    img.src = 'img/' + c.key + '.png';
+    img.alt = c.key;
+    el.appendChild(img);
+    container.appendChild(el);
+  });
+})();
+
+});
+</script>
+</body>
+</html>

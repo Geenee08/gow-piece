@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8,897 Lines of Wasseypur</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/scrollama@3.2.0/scrollama.min.js"></script>
+  <script src="https://unpkg.com/intersection-observer@0.12.2/intersection-observer.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e8e8e8;
+      --muted: #888;
+      --accent: #e74c3c;
+      --blue: #3498db;
+      --orange: #f39c12;
+      --green: #2ecc71;
+      --red-dark: #8B0000;
+      --red: #DC143C;
+      --red-orange: #FF4500;
+      --orange-dark: #FF8C00;
+      --col-width: min(680px, 90vw);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Serif', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+    .header {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .header h1 {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .header h1 span { color: var(--accent); }
+    .header .dek {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 540px;
+      font-style: italic;
+    }
+    .prose {
+      max-width: var(--col-width);
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+    .prose p { margin-bottom: 1.4em; }
+    .prose h2 {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 4rem 0 1.5rem;
+      color: var(--text);
+    }
+    .prose h2 .num {
+      color: var(--accent);
+      font-weight: 400;
+      margin-right: 0.3em;
+    }
+    .chart-wrap {
+      max-width: 900px;
+      margin: 2.5rem auto;
+      padding: 0 1rem;
+    }
+    .chart-wrap svg { width: 100%; height: auto; }
+    .chart-label {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.9rem;
+    }
+    th {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      border-bottom: 2px solid #333;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    tr.survivor td { color: var(--green); font-weight: 600; }
+    tr.dead td:last-child { color: var(--accent); }
+    .big-number {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+      margin: 2rem 0 0.5rem;
+    }
+    .big-number-label {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+    blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 0.8rem 1.2rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: var(--muted);
+      background: #111;
+    }
+    .intercut-strip {
+      display: flex;
+      gap: 1px;
+      margin: 2rem 0;
+      height: 48px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .intercut-strip .block {
+      flex: 1;
+      min-width: 2px;
+    }
+    .intercut-strip .block.H { background: var(--accent); }
+    .intercut-strip .block.S { background: var(--blue); }
+    .intercut-strip .block.O { background: #444; }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin: 0.4rem 0;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.85rem;
+    }
+    .bar-row .label { width: 80px; color: var(--muted); text-align: right; padding-right: 12px; }
+    .bar-row .bar { height: 24px; border-radius: 3px; transition: width 0.6s ease; }
+    .bar-row .val { padding-left: 8px; font-weight: 600; }
+    .methodology {
+      max-width: var(--col-width);
+      margin: 4rem auto 2rem;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid #222;
+      font-size: 0.8rem;
+      color: #666;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .footer {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #444;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.8rem;
+    }
+    @media (max-width: 600px) {
+      body { font-size: 16px; }
+      .header h1 { font-size: 2.2rem; }
+      table { font-size: 0.8rem; }
+      th, td { padding: 0.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>8,897</span> Lines of Wasseypur</h1>
+  <p class="dek">We read every line of the Gangs of Wasseypur scripts — both films, 288 pages, 64 years of story. Here are the patterns hiding inside.</p>
+</div>
+
+<!-- SECTION I -->
+<div class="prose">
+  <h2><span class="num">I.</span> Four Generations, One Trick</h2>
+  <p>The Gangs of Wasseypur saga spans 288 pages, 8,897 lines, and 64 years. It tells the story of four generations of one family. We parsed every line of both scripts to track every character's presence across the story.</p>
+  <p>Here's what we found: the saga pulls the same structural trick four times. Each generation's successor is nearly invisible while their predecessor is alive — then explodes into dominance after the predecessor dies.</p>
+</div>
+
+<div class="chart-wrap" id="succession-chart"></div>
+
+<div class="prose">
+  <table>
+    <thead>
+      <tr><th>Character</th><th>Generation</th><th>Peak Quarter</th><th>Mentions at Peak</th><th>Q1 Mentions</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Shahid Khan</td><td>Gen 1</td><td>P1-Q1</td><td>110</td><td>110</td></tr>
+      <tr><td>Sardar Khan</td><td>Gen 2</td><td>P1-Q2</td><td>168</td><td>32</td></tr>
+      <tr><td>Faisal Khan</td><td>Gen 3</td><td>P2-Q1</td><td>99</td><td>99</td></tr>
+      <tr><td>Definite</td><td>Gen 4</td><td>P2-Q4</td><td>49</td><td>4</td></tr>
+    </tbody>
+  </table>
+  <p>Shahid Khan has 110 mentions in the first quarter of Part 1 — and then disappears entirely. Zero mentions for the rest of the saga. He doesn't fade. He's amputated.</p>
+  <p>Sardar Khan, the character many consider the saga's protagonist, has just 32 mentions while his father Shahid is alive. That's 29% of Shahid's presence. Then Shahid is shot, and Sardar's mentions quintuple to 168.</p>
+  <p>The script repeats this pattern with increasing aggression. By Part 2, Definite — the youngest brother who ends up pulling the trigger in the final scene — has just 4 mentions in the first quarter. That's 4% of Faisal's presence. A character who is functionally not in the movie. Then, quarter by quarter, he rises: 4, 47, 38, 49.</p>
+</div>
+
+<!-- SECTION II -->
+<div class="prose">
+  <h2><span class="num">II.</span> The Survivor's Table</h2>
+  <p>Of the six Khan men who drive the saga, only two survive. The data reveals a clean binary that governs who lives and who dies.</p>
+  <table>
+    <thead>
+      <tr><th>Character</th><th>Mentions</th><th>Voiceovers</th><th>Violence Lines</th><th>Survives?</th></tr>
+    </thead>
+    <tbody>
+      <tr class="dead"><td>Shahid Khan</td><td>110</td><td>0</td><td>4</td><td>No</td></tr>
+      <tr class="dead"><td>Sardar Khan</td><td>430</td><td>1</td><td>13</td><td>No</td></tr>
+      <tr class="dead"><td>Danish</td><td>188</td><td>1</td><td>2</td><td>No</td></tr>
+      <tr class="dead"><td>Faisal Khan</td><td>678</td><td>0</td><td>26</td><td>No</td></tr>
+      <tr class="survivor"><td>Definite</td><td>272</td><td>11</td><td>19</td><td>Yes</td></tr>
+      <tr class="survivor"><td>Nasir</td><td>277</td><td>67</td><td>0</td><td>Yes</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="big-number">0</div>
+<div class="big-number-label">Violence lines for Nasir across 8,897 lines of script.<br>67 voiceovers. The only Khan who never touches a gun.</div>
+
+<div class="prose">
+  <p>In Part 1, Nasir is 92% participant and 8% narrator. He's in the room. He's part of the family. By Part 2, he's 47% narrator. Nearly half his presence is voiceover — spoken from outside the frame.</p>
+</div>
+
+<div class="chart-wrap" id="nasir-chart"></div>
+
+<div class="prose">
+  <p>And his narration has a direction: of the times his voiceover appears near a death scene, 15 come <em>after</em> the death and only 4 come <em>before</em>. Nasir doesn't foreshadow violence. He eulogizes it.</p>
+  <p>His final scene: Mumbai. 2009. A house next to railway tracks. Mohsina is drying clothes. Nasir picks up a child and delivers the saga's last words:</p>
+  <blockquote>"Wasseypur ko Faizal ke jaane se koi farak nahi pada. Na hi Ramadhir ke marne se. Woh tab bhi Kurukshetra tha aur aaj bhi Kurukshetra hai… aur shayad hamesha rahega."</blockquote>
+  <p>The only Khan who can tell you Wasseypur hasn't changed is the one who left it.</p>
+</div>
+
+<!-- SECTION III -->
+<div class="prose">
+  <h2><span class="num">III.</span> 231 vs. 234</h2>
+  <p>Nagma — the matriarch — appears 231 times across the saga. Ramadhir Singh — the puppet master — appears 234 times. Almost the same. Three mentions apart.</p>
+  <p>But what they say is opposite.</p>
+</div>
+
+<div class="chart-wrap" id="agency-chart"></div>
+
+<div class="prose">
+  <p>Nagma's dialogue is 34% questions. Shama Parveen, the widow, has zero commands and 21% grief. Mohsina's dialogue is 39% questions. The women ask. The men answer by shooting.</p>
+  <p>And then there's Durga.</p>
+  <p>Durga has 62 mentions across the saga and 16 dialogue lines in Part 2. She speaks less than nearly anyone. But she bookends the entire 288-page story with the two most consequential actions any character takes:</p>
+  <p><strong>Part 1's final scene:</strong> Durga picks up the phone and says <em>"Woh nikal gaye hain"</em> — he's left. Cut to: Sardar Khan is shot at the petrol pump.</p>
+  <p><strong>Part 2's final scene:</strong> <em>"Definite walks up to Durga."</em> He has just shot Faisal. JP Singh is thanking the cop. Durga is there.</p>
+</div>
+
+<div class="big-number">16</div>
+<div class="big-number-label">Dialogue lines for Durga. 62 mentions. Bookends 288 pages.<br>The woman who speaks least acts most.</div>
+
+<!-- SECTION IV -->
+<div class="prose">
+  <h2><span class="num">IV.</span> The Bhagalpur Strobe</h2>
+  <p>Starting at line 3,649 of Part 2, the script enters the Bhagalpur Hotel and doesn't leave for 350 lines. 72 scenes. Average length: 4.9 lines — one-third the rest of the film.</p>
+  <p>The script alternates between Hotel and Street with 63 switches across 72 scenes:</p>
+</div>
+
+<div class="chart-wrap">
+  <div class="intercut-strip" id="intercut-strip"></div>
+  <div class="chart-label">Each block = one scene. <span style="color:var(--accent)">Red</span> = Hotel. <span style="color:var(--blue)">Blue</span> = Street. <span style="color:#888">Gray</span> = Other. 63 alternations in 72 scenes.</div>
+</div>
+
+<div class="prose">
+  <p>The rest of Part 2 averages one scene change every 14.4 lines. The Bhagalpur sequence: every 4.9 lines. The script's cutting rhythm triples inside this climax.</p>
+  <p>This acceleration is part of a larger structural pattern:</p>
+</div>
+
+<div class="chart-wrap" id="pacing-chart"></div>
+
+<div class="prose">
+  <p>Q4 has 55% more scenes than Q1. The film gets faster as it gets deadlier. And across the full saga: Part 1 covers 44 years in 100 scenes. Part 2 covers weeks in 342 scenes. Part 2 is 2.4x faster.</p>
+</div>
+
+<!-- SECTION V -->
+<div class="prose">
+  <h2><span class="num">V.</span> The Constants</h2>
+  <p>Most characters in the saga are waves — they rise and crash. Two are not.</p>
+  <p>Ramadhir Singh has 234 mentions across both films. Here is his presence across all eight quarters of the saga:</p>
+</div>
+
+<div class="chart-wrap" id="ramadhir-chart"></div>
+
+<div class="prose">
+  <p>He dips to 2 mentions in P2-Q2 — the story's one moment where you might forget he exists — but he never reaches zero. Four generations of Khans rise and fall against him. He endures. When Faisal finally shoots him in the penultimate scene, Nasir's voiceover tells us it changed nothing.</p>
+  <p>The second constant isn't a person. It's daylight. 76% of all scenes happen during the day. Deaths follow the same pattern: 22 occur in exterior scenes, 10 in interiors. The powerful die outdoors, in public, in sunlight. Everyone is watching. No one intervenes.</p>
+</div>
+
+<!-- BOOKEND -->
+<div class="prose" style="margin-top:5rem;">
+  <h2>The Bookends</h2>
+  <p>The saga's first spoken word belongs to <strong>Sultan</strong> — the enforcer — pointing a gun at a paan shop in 2004.</p>
+  <p>The saga's last spoken word belongs to <strong>Nasir</strong> — the narrator — holding a child on a rooftop in Mumbai in 2009.</p>
+  <p>Between those two voices: 288 pages. 442 scenes. 64 years. Four dead Khans. One surviving narrator. And a woman with 16 dialogue lines who, from the first phone call to the last gunshot, was the mechanism that kept the cycle turning.</p>
+  <p>8,897 lines. We read every one.</p>
+  <blockquote>"Nothing changed."</blockquote>
+</div>
+
+<div class="methodology">
+  <strong>Data & Methodology</strong><br>
+  Both scripts (GOW Part 1 & Part 2 DUB SCRIPTS, for post-production) were parsed line-by-line using Python. Character mentions counted via exact string matching. Dialogue blocks identified by ALL CAPS sluglines. Violence lines tagged by proximity of character names to English keywords (shoot, fire, gun, kill, stab, pistol). Hindi dialogue analyzed for agency via Devanagari pattern matching for imperative forms, question markers, and grief language. Scene headings identified by INT./EXT. prefixes.
+</div>
+
+<div class="footer">
+  A visual essay. Data and code available on request.
+</div>
+
+<script>
+// DATA
+const successionData = {
+  "Shahid Khan":   { color: "#8B0000", q: [110, 0, 0, 0, 0, 0, 0, 0] },
+  "Sardar Khan":   { color: "#DC143C", q: [32, 168, 123, 93, 6, 1, 3, 2] },
+  "Faisal Khan":   { color: "#FF4500", q: [0, 15, 55, 70, 99, 48, 77, 65] },
+  "Definite":      { color: "#FF8C00", q: [0, 0, 5, 5, 4, 47, 38, 49] },
+};
+const ramadhirQ = [48, 35, 45, 17, 31, 2, 25, 31];
+const nasirData = [
+  { q: "P1-Q1", dial: 14, vo: 0 }, { q: "P1-Q2", dial: 16, vo: 4 },
+  { q: "P1-Q3", dial: 14, vo: 9 }, { q: "P1-Q4", dial: 9, vo: 0 },
+  { q: "P2-Q1", dial: 5, vo: 22 }, { q: "P2-Q2", dial: 0, vo: 6 },
+  { q: "P2-Q3", dial: 1, vo: 5 }, { q: "P2-Q4", dial: 9, vo: 21 },
+];
+const pacingData = [
+  { q: "Q1", scenes: 73, cuts: 68 }, { q: "Q2", scenes: 70, cuts: 66 },
+  { q: "Q3", scenes: 81, cuts: 75 }, { q: "Q4", scenes: 113, cuts: 114 },
+];
+const intercutSeq = "OHOOSOHOHOSHSHSHSHSHSHSHSHSHSHSHSSSHSHSHSHSHSSHSHSSHSHSHSHSSHSSHSHSHSSHS";
+
+// RENDER INTERCUT STRIP
+const strip = document.getElementById("intercut-strip");
+intercutSeq.split("").forEach(c => {
+  const block = document.createElement("div");
+  block.className = `block ${c}`;
+  strip.appendChild(block);
+});
+
+// HELPER: create SVG
+function createSVG(selector, w, h, margin) {
+  const svg = d3.select(selector).append("svg")
+    .attr("viewBox", `0 0 ${w} ${h}`)
+    .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+  return { svg, width: w - margin.left - margin.right, height: h - margin.top - margin.bottom };
+}
+
+// VIZ 1: Succession Curves
+(function() {
+  const m = { top: 30, right: 120, bottom: 40, left: 50 };
+  const { svg, width, height } = createSVG("#succession-chart", 860, 380, m);
+  const labels = ["P1-Q1","P1-Q2","P1-Q3","P1-Q4","P2-Q1","P2-Q2","P2-Q3","P2-Q4"];
+  const x = d3.scalePoint().domain(labels).range([0, width]).padding(0.1);
+  const y = d3.scaleLinear().domain([0, 180]).range([height, 0]);
+
+  svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).tickSize(0))
+    .selectAll("text").attr("fill","#666").style("font-size","11px");
+  svg.append("g").call(d3.axisLeft(y).ticks(5).tickSize(-width)).selectAll("text").attr("fill","#666");
+  svg.selectAll(".tick line").attr("stroke","#1a1a1a");
+  svg.select(".domain").remove();
+
+  const area = d3.area()
+    .x((d, i) => x(labels[i]))
+    .y0(height)
+    .y1(d => y(d))
+    .curve(d3.curveMonotoneX);
+
+  const line = d3.line()
+    .x((d, i) => x(labels[i]))
+    .y(d => y(d))
+    .curve(d3.curveMonotoneX);
+
+  // Ramadhir baseline
+  svg.append("path").datum(ramadhirQ).attr("d", line).attr("fill","none")
+    .attr("stroke","#555").attr("stroke-width",1.5).attr("stroke-dasharray","4,4");
+  svg.append("text").attr("x", x(labels[7])+8).attr("y", y(ramadhirQ[7])+4)
+    .text("Ramadhir").attr("fill","#555").style("font-size","11px").style("font-family","IBM Plex Sans");
+
+  Object.entries(successionData).forEach(([name, d]) => {
+    svg.append("path").datum(d.q).attr("d", area)
+      .attr("fill", d.color).attr("opacity", 0.25);
+    svg.append("path").datum(d.q).attr("d", line)
+      .attr("fill","none").attr("stroke", d.color).attr("stroke-width", 2.5);
+    const lastNonZero = d.q.reduce((acc, v, i) => v > 0 ? i : acc, 0);
+    svg.append("text").attr("x", x(labels[lastNonZero])+8).attr("y", y(d.q[lastNonZero]))
+      .text(name).attr("fill", d.color).style("font-size","12px").style("font-weight","600")
+      .style("font-family","IBM Plex Sans");
+  });
+})();
+
+// VIZ 2: Nasir Mode Shift
+(function() {
+  const m = { top: 20, right: 20, bottom: 40, left: 60 };
+  const { svg, width, height } = createSVG("#nasir-chart", 700, 300, m);
+  const x = d3.scaleBand().domain(nasirData.map(d=>d.q)).range([0, width]).padding(0.25);
+  const y = d3.scaleLinear().domain([0, 30]).range([height, 0]);
+
+  svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).tickSize(0))
+    .selectAll("text").attr("fill","#666").style("font-size","11px");
+  svg.append("g").call(d3.axisLeft(y).ticks(5)).selectAll("text").attr("fill","#666");
+  svg.select(".domain").remove();
+
+  // Stacked bars
+  nasirData.forEach(d => {
+    svg.append("rect").attr("x", x(d.q)).attr("y", y(d.dial + d.vo))
+      .attr("width", x.bandwidth()).attr("height", y(0) - y(d.dial + d.vo))
+      .attr("fill","none").attr("stroke","#333");
+    svg.append("rect").attr("x", x(d.q)).attr("y", y(d.dial + d.vo))
+      .attr("width", x.bandwidth()).attr("height", y(0) - y(d.vo))
+      .attr("fill", "#f39c12").attr("opacity", 0.85);
+    svg.append("rect").attr("x", x(d.q)).attr("y", y(d.dial))
+      .attr("width", x.bandwidth()).attr("height", y(0) - y(d.dial))
+      .attr("fill", "#3498db").attr("opacity", 0.85);
+  });
+
+  // Legend
+  const leg = svg.append("g").attr("transform", `translate(${width - 180}, 0)`);
+  leg.append("rect").attr("width",12).attr("height",12).attr("fill","#3498db");
+  leg.append("text").attr("x",18).attr("y",11).text("In-scene dialogue").attr("fill","#888").style("font-size","11px");
+  leg.append("rect").attr("y",18).attr("width",12).attr("height",12).attr("fill","#f39c12");
+  leg.append("text").attr("x",18).attr("y",29).text("Voiceover narration").attr("fill","#888").style("font-size","11px");
+})();
+
+// VIZ 3: Agency comparison (simple bars)
+(function() {
+  const container = d3.select("#agency-chart");
+  const agents = [
+    { name: "Nagma", mentions: 231, questions: 34, commands: 20, grief: 6, color: "#3498db" },
+    { name: "Ramadhir Singh", mentions: 234, questions: 0, commands: 70, grief: 0, color: "#922B21" },
+  ];
+
+  agents.forEach(a => {
+    const row = container.append("div").style("margin-bottom","1.5rem");
+    row.append("div").style("font-family","IBM Plex Sans").style("font-weight","700")
+      .style("font-size","1rem").style("margin-bottom","0.3rem")
+      .style("color", a.color).text(`${a.name} — ${a.mentions} mentions`);
+
+    if (a.questions > 0) {
+      row.append("div").attr("class","bar-row")
+        .html(`<span class="label">Questions</span><div class="bar" style="width:${a.questions * 3}px; background:${a.color}"></div><span class="val">${a.questions}%</span>`);
+    }
+    if (a.commands > 0) {
+      row.append("div").attr("class","bar-row")
+        .html(`<span class="label">Commands</span><div class="bar" style="width:${a.commands * 3}px; background:${a.color}; opacity:0.7"></div><span class="val">${a.commands}%</span>`);
+    }
+    if (a.grief > 0) {
+      row.append("div").attr("class","bar-row")
+        .html(`<span class="label">Grief</span><div class="bar" style="width:${a.grief * 3}px; background:${a.color}; opacity:0.5"></div><span class="val">${a.grief}%</span>`);
+    }
+  });
+})();
+
+// VIZ 4: Pacing bars
+(function() {
+  const m = { top: 20, right: 20, bottom: 40, left: 50 };
+  const { svg, width, height } = createSVG("#pacing-chart", 600, 260, m);
+  const x = d3.scaleBand().domain(pacingData.map(d=>d.q)).range([0, width]).padding(0.3);
+  const y = d3.scaleLinear().domain([0, 130]).range([height, 0]);
+
+  svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).tickSize(0))
+    .selectAll("text").attr("fill","#666").style("font-size","12px");
+  svg.select(".domain").remove();
+
+  pacingData.forEach(d => {
+    svg.append("rect").attr("x", x(d.q)).attr("y", y(d.scenes))
+      .attr("width", x.bandwidth()/2 - 2).attr("height", y(0)-y(d.scenes))
+      .attr("fill", "#e74c3c").attr("opacity", 0.8);
+    svg.append("rect").attr("x", x(d.q) + x.bandwidth()/2 + 2).attr("y", y(d.cuts))
+      .attr("width", x.bandwidth()/2 - 2).attr("height", y(0)-y(d.cuts))
+      .attr("fill", "#3498db").attr("opacity", 0.8);
+    svg.append("text").attr("x", x(d.q) + x.bandwidth()/4).attr("y", y(d.scenes)-6)
+      .text(d.scenes).attr("fill","#e74c3c").attr("text-anchor","middle").style("font-size","12px").style("font-weight","600");
+    svg.append("text").attr("x", x(d.q) + 3*x.bandwidth()/4).attr("y", y(d.cuts)-6)
+      .text(d.cuts).attr("fill","#3498db").attr("text-anchor","middle").style("font-size","12px").style("font-weight","600");
+  });
+  
+  const leg = svg.append("g").attr("transform", `translate(${width - 160}, 0)`);
+  leg.append("rect").attr("width",12).attr("height",12).attr("fill","#e74c3c");
+  leg.append("text").attr("x",18).attr("y",11).text("Scenes").attr("fill","#888").style("font-size","11px");
+  leg.append("rect").attr("y",18).attr("width",12).attr("height",12).attr("fill","#3498db");
+  leg.append("text").attr("x",18).attr("y",29).text("CUT TO transitions").attr("fill","#888").style("font-size","11px");
+})();
+
+// VIZ 5: Ramadhir flatline vs Khan waves
+(function() {
+  const m = { top: 30, right: 100, bottom: 40, left: 50 };
+  const { svg, width, height } = createSVG("#ramadhir-chart", 860, 320, m);
+  const labels = ["P1-Q1","P1-Q2","P1-Q3","P1-Q4","P2-Q1","P2-Q2","P2-Q3","P2-Q4"];
+  const x = d3.scalePoint().domain(labels).range([0, width]).padding(0.1);
+  const y = d3.scaleLinear().domain([0, 180]).range([height, 0]);
+
+  svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).tickSize(0))
+    .selectAll("text").attr("fill","#666").style("font-size","11px");
+  svg.select(".domain").remove();
+
+  const line = d3.line().x((d,i) => x(labels[i])).y(d => y(d)).curve(d3.curveMonotoneX);
+
+  // Khan ghosts
+  Object.entries(successionData).forEach(([name, d]) => {
+    svg.append("path").datum(d.q).attr("d", line)
+      .attr("fill","none").attr("stroke", d.color).attr("stroke-width", 1).attr("opacity", 0.2);
+  });
+
+  // Ramadhir BOLD
+  svg.append("path").datum(ramadhirQ).attr("d", line)
+    .attr("fill","none").attr("stroke","#e8e8e8").attr("stroke-width", 3);
+  
+  ramadhirQ.forEach((v, i) => {
+    svg.append("circle").attr("cx", x(labels[i])).attr("cy", y(v)).attr("r", 4)
+      .attr("fill","#e8e8e8");
+    svg.append("text").attr("x", x(labels[i])).attr("y", y(v) - 12)
+      .text(v).attr("fill","#e8e8e8").attr("text-anchor","middle")
+      .style("font-size","12px").style("font-weight","600").style("font-family","IBM Plex Sans");
+  });
+
+  svg.append("text").attr("x", x(labels[7])+8).attr("y", y(ramadhirQ[7])+4)
+    .text("Ramadhir Singh").attr("fill","#e8e8e8").style("font-size","13px").style("font-weight","700")
+    .style("font-family","IBM Plex Sans");
+})();
+
+</script>
+</body>
+</html>

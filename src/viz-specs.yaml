@@ -1,0 +1,178 @@
+# Visualization Specifications for "8,897 Lines of Wasseypur"
+# Each spec maps to a [VISUALIZATION] callout in article.md
+
+visualizations:
+
+  # ============================================
+  # SECTION I: The Succession Cycle
+  # ============================================
+  
+  1_succession_curves:
+    type: "scrollytelling area chart"
+    description: "Four overlapping area curves showing each generation's rise and fall"
+    x_axis: "Combined script position (Page 1 of P1 through Page 170 of P2)"
+    y_axis: "Mentions per 10-page block (normalized)"
+    series:
+      - name: "Shahid Khan"
+        color: "#8B0000"  # dark red
+        data_key: "succession.Shahid Khan.eight_quarters"
+        annotation: "110 mentions → 0. Amputated."
+      - name: "Sardar Khan"
+        color: "#DC143C"  # crimson
+        data_key: "succession.Sardar Khan.eight_quarters"
+        annotation: "32 → 168. Quintuples after father's death."
+      - name: "Faisal Khan"
+        color: "#FF4500"  # orange-red
+        data_key: "succession.Faisal Khan.eight_quarters"
+        annotation: "Dominates P2, erodes."
+      - name: "Definite"
+        color: "#FF8C00"  # dark orange
+        data_key: "succession.Definite.eight_quarters"
+        annotation: "4 → 49. The hockey stick."
+    scroll_behavior: "Each series appears one at a time as user scrolls. Previous series fades to 30% opacity."
+    background_line:
+      name: "Ramadhir Singh"
+      color: "#333333"
+      opacity: 0.3
+      style: "dashed"
+      note: "Always visible. The flat line underneath the waves."
+
+  2_suppression_ratio:
+    type: "horizontal bar chart"
+    description: "Each successor's visibility as % of patriarch's Q1 presence"
+    bars:
+      - label: "Sardar (vs Shahid)"
+        value: 29
+        color: "#DC143C"
+      - label: "Definite (vs Faisal)"
+        value: 4
+        color: "#FF8C00"
+    annotation: "The suppression gets more aggressive each generation"
+    comparison_note: "For reference: The Godfather's Michael = 58% of Vito's Q1"
+
+  # ============================================
+  # SECTION II: The Survivor's Table
+  # ============================================
+  
+  3_survival_table:
+    type: "diverging bar chart / lollipop"
+    description: "Violence lines (left, red) vs V.O. count (right, blue) for each Khan"
+    data_key: "survival"
+    left_axis: "Violence lines"
+    right_axis: "Voiceovers"
+    highlight: "Nasir (67 V.O., 0 violence) and Definite"
+    survivor_indicator: "Green dot for survivors, red X for dead"
+
+  4_nasir_mode_shift:
+    type: "stacked bar chart, 8 bars"
+    description: "Nasir's dialogue (blue) vs V.O. (orange) per quarter"
+    data:
+      # [dialogue, voiceover] per quarter
+      - [14, 0]   # P1-Q1
+      - [16, 4]   # P1-Q2
+      - [14, 9]   # P1-Q3
+      - [9, 0]    # P1-Q4
+      - [5, 22]   # P2-Q1
+      - [0, 6]    # P2-Q2
+      - [1, 5]    # P2-Q3
+      - [9, 21]   # P2-Q4
+    annotation_p1: "92% participant"
+    annotation_p2: "47% narrator"
+
+  # ============================================
+  # SECTION III: 231 vs. 234
+  # ============================================
+  
+  5_nagma_ramadhir:
+    type: "paired comparison"
+    description: "Two characters with near-identical volume, opposite agency"
+    left:
+      name: "Nagma (Matriarch)"
+      mentions: 231
+      dialogue_breakdown: {questions: 34, commands: 20, grief: 6}
+      color: "#2E86C1"
+    right:
+      name: "Ramadhir Singh (Villain)"
+      mentions: 234
+      dialogue_breakdown: {orders: "dominant", plot_driving: "dominant"}
+      color: "#922B21"
+    center_annotation: "3 mentions apart. Opposite power."
+
+  6_durga_bookend:
+    type: "timeline with two dots"
+    description: "Durga's structural span across 288 pages"
+    point_1:
+      position: "P1-end"
+      label: "Phone call: 'Woh nikal gaye hain'"
+      action: "Sends Sardar to his death"
+    point_2:
+      position: "P2-end"
+      label: "'Definite walks up to Durga'"
+      action: "Stands behind Faisal's killer"
+    connecting_line: "Thin dashed line spanning entire saga between the two points"
+    annotation: "62 mentions. 16 dialogue lines. Bookends 288 pages."
+
+  # ============================================
+  # SECTION IV: The Bhagalpur Strobe
+  # ============================================
+  
+  7_bhagalpur_intercut:
+    type: "horizontal strip / heartbeat monitor"
+    description: "72 colored blocks showing Hotel/Street alternation"
+    sequence: "OHOOSOHOHOSHSHSHSHSHSHSHSHSHSHSHSSSHSHSHSHSHSSHSHSSHSHSHSHSSHSSHSHSHSSHS"
+    colors:
+      H: "#E74C3C"  # red (Hotel)
+      S: "#3498DB"  # blue (Street)
+      O: "#95A5A6"  # gray (Other)
+    stat_overlay: "63 alternations in 72 scenes"
+    comparison: "Rest of film: 1 scene change every 14.4 lines. Here: every 4.9 lines."
+
+  8_acceleration:
+    type: "grouped bar chart"
+    description: "Scenes and cuts per quarter in Part 2"
+    groups:
+      - quarter: "Q1"
+        scenes: 73
+        cuts: 68
+      - quarter: "Q2"
+        scenes: 70
+        cuts: 66
+      - quarter: "Q3"
+        scenes: 81
+        cuts: 75
+      - quarter: "Q4"
+        scenes: 113
+        cuts: 114
+    annotation: "Q4 has 55% more scenes than Q1"
+
+  # ============================================
+  # SECTION V: The Constants
+  # ============================================
+  
+  9_ramadhir_flatline:
+    type: "line chart overlay"
+    description: "Ramadhir's flat presence against the Khan waves"
+    ramadhir_data: [48, 35, 45, 17, 31, 2, 25, 31]
+    khan_curves: "Same as viz #1 but at reduced opacity"
+    annotation: "Never spikes. Never reaches zero (except near-miss: 2 in P2-Q2). Endures."
+    
+  10_daylight:
+    type: "donut chart or icon array"
+    description: "76% of scenes happen in daylight"
+    day: 334
+    night: 101
+    annotation: "The powerful die outdoors, in public, in sunlight."
+
+# ============================================
+# TECHNICAL NOTES
+# ============================================
+# 
+# Recommended stack: Svelte + D3 + Scrollama (pudding standard)
+# All data lives in /data/gow_complete_dataset.json
+# Article text in /src/article.md
+# 
+# Key scroll triggers:
+#   - Section I succession curves: 4 scroll steps (one per generation)
+#   - Section II survival table: hover for detail
+#   - Section IV Bhagalpur strip: auto-scroll through the intercut
+#   - Section V Ramadhir overlay: appears on scroll after Khan curves
